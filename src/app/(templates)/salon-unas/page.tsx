@@ -1,56 +1,39 @@
-import Link from "next/link";
-import Image from "next/image";
-import { Suspense } from "react";
-import { services as allServices } from "@/lib/salon-unas-data";
-import SearchBar from "./SearchBar";
+import Link from 'next/link'
+import Image from 'next/image'
+import { Suspense } from 'react'
+import { getServices, getGallery, getTestimonials } from '@/lib/salon/queries'
+import SearchBar from './SearchBar'
 
-const BRAND = "#ff385c";
+export const dynamic = 'force-dynamic'
 
-const allMapped = allServices.map((s) => ({
-  slug: s.slug,
-  emoji: s.emoji,
-  name: s.name,
-  tagline: s.tagline,
-  description: s.description,
-  price: s.price,
-  image: s.image,
-  keywords: `${s.name} ${s.tagline} ${s.description}`.toLowerCase(),
-}));
-
-const gallery = [
-  { src: "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80&fit=crop", alt: "Manicure rosa con detalles dorados" },
-  { src: "https://images.unsplash.com/photo-1604855023538-7e8e6e33c11b?w=600&q=80&fit=crop", alt: "Nail art floral en colores pasteles" },
-  { src: "https://images.unsplash.com/photo-1607957630705-00fb7f7bc3b8?w=600&q=80&fit=crop", alt: "Semipermanente lila con brillo" },
-  { src: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=600&q=80&fit=crop", alt: "Diseño personalizado con piedras" },
-  { src: "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=600&q=80&fit=crop", alt: "Colección de esmaltes de temporada" },
-  { src: "https://images.unsplash.com/photo-1610992015732-f449763bb97a?w=600&q=80&fit=crop", alt: "Manicure francesa moderna" },
-  { src: "https://images.unsplash.com/photo-1540291565228-9de6a1b6ed28?w=600&q=80&fit=crop", alt: "Nail art geométrico en tono nude" },
-  { src: "https://images.unsplash.com/photo-1632345031435-8ad936b159d4?w=600&q=80&fit=crop", alt: "Uñas acrílicas color borgoña" },
-];
-
-const testimonials = [
-  { name: "María José R.", text: "Llevo 2 años viniendo cada 3 semanas y nunca me han fallado. El semipermanente me dura perfectamente y las chicas son muy amables.", stars: 5 },
-  { name: "Sofía A.", text: "Vine para mis XV años y quedé enamorada. El diseño personalizado superó todo lo que imaginé. Mis amigas me preguntaron dónde me los hicieron.", stars: 5 },
-  { name: "Karla M.", text: "El pedicure spa es lo mejor que existe para desestresarse un martes. El masaje de pies solo ya vale los $20.", stars: 5 },
-];
+const BRAND = '#ff385c'
 
 export default async function SalonUnasPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string }>
 }) {
-  const { q } = await searchParams;
-  const query = q?.trim().toLowerCase() ?? "";
+  const { q } = await searchParams
+  const query = q?.trim().toLowerCase() ?? ''
+
+  const [allServices, gallery, testimonials] = await Promise.all([
+    getServices(),
+    getGallery(),
+    getTestimonials(),
+  ])
+
   const services = query
-    ? allMapped.filter((s) => s.keywords.includes(query))
-    : allMapped;
+    ? allServices.filter(s =>
+        `${s.name} ${s.tagline} ${s.description}`.toLowerCase().includes(query)
+      )
+    : allServices
 
   return (
     <div
-      style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
+      style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
       className="min-h-screen bg-white text-[#222222]"
     >
-      {/* ── NAV ─────────────────────────────────────────────────── */}
+      {/* NAV */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#ebebeb]">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
           <a href="/salon-unas" className="flex items-center gap-2.5 shrink-0">
@@ -60,15 +43,13 @@ export default async function SalonUnasPage({
             >
               N
             </span>
-            <span className="font-semibold text-[#222222] hidden sm:block">
-              Nails by Mariela
-            </span>
+            <span className="font-semibold text-[#222222] hidden sm:block">Nails by Mariela</span>
           </a>
           <nav className="hidden md:flex items-center gap-8">
             <a href="#servicios" className="text-sm font-medium text-[#3f3f3f] hover:text-[#222222] transition-colors">Servicios</a>
-            <a href="#galeria" className="text-sm font-medium text-[#3f3f3f] hover:text-[#222222] transition-colors">Galería</a>
+            <a href="#galeria"   className="text-sm font-medium text-[#3f3f3f] hover:text-[#222222] transition-colors">Galería</a>
             <a href="#opiniones" className="text-sm font-medium text-[#3f3f3f] hover:text-[#222222] transition-colors">Opiniones</a>
-            <a href="#contacto" className="text-sm font-medium text-[#3f3f3f] hover:text-[#222222] transition-colors">Contacto</a>
+            <a href="#contacto"  className="text-sm font-medium text-[#3f3f3f] hover:text-[#222222] transition-colors">Contacto</a>
           </nav>
           <a
             href="#reservar"
@@ -80,9 +61,8 @@ export default async function SalonUnasPage({
         </div>
       </header>
 
-      {/* ── HERO ────────────────────────────────────────────────── */}
+      {/* HERO */}
       <section className="relative bg-white overflow-hidden">
-        {/* Hero image band */}
         <div className="relative h-[420px] w-full">
           <Image
             src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=1400&q=85&fit=crop&crop=center"
@@ -98,11 +78,10 @@ export default async function SalonUnasPage({
             </p>
             <h1
               className="font-bold text-white leading-tight mb-4"
-              style={{ fontSize: "clamp(32px, 5.5vw, 58px)", textShadow: "0 2px 16px rgba(0,0,0,0.3)" }}
+              style={{ fontSize: 'clamp(32px, 5.5vw, 58px)', textShadow: '0 2px 16px rgba(0,0,0,0.3)' }}
             >
               Uñas que te hacen sentir
-              <br />
-              en tu mejor versión
+              <br />en tu mejor versión
             </h1>
             <p className="text-white/85 text-lg mb-8 max-w-xl leading-relaxed">
               En Nails by Mariela cuidamos cada detalle para que salgas impecable.
@@ -126,15 +105,14 @@ export default async function SalonUnasPage({
           </div>
         </div>
 
-        {/* Trust bar */}
         <div className="border-b border-[#ebebeb]">
           <div className="max-w-4xl mx-auto px-6 py-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
             {[
-              { icon: "⭐", label: "4.9 / 5", sub: "280+ reseñas" },
-              { icon: "📅", label: "Lun – Sáb", sub: "8:00 am – 7:00 pm" },
-              { icon: "🏅", label: "5 años", sub: "de experiencia" },
-              { icon: "✅", label: "Higiene garantizada", sub: "Materiales desechables" },
-            ].map((item) => (
+              { icon: '⭐', label: '4.9 / 5', sub: '280+ reseñas' },
+              { icon: '📅', label: 'Lun – Sáb', sub: '8:00 am – 7:00 pm' },
+              { icon: '🏅', label: '5 años', sub: 'de experiencia' },
+              { icon: '✅', label: 'Higiene garantizada', sub: 'Materiales desechables' },
+            ].map(item => (
               <div key={item.label} className="flex flex-col items-center gap-0.5">
                 <span className="text-xl">{item.icon}</span>
                 <p className="text-sm font-semibold text-[#222222]">{item.label}</p>
@@ -144,7 +122,6 @@ export default async function SalonUnasPage({
           </div>
         </div>
 
-        {/* Search */}
         <div className="max-w-3xl mx-auto px-6 py-8">
           <Suspense fallback={<div className="h-14 rounded-full bg-[#f7f7f7] animate-pulse" />}>
             <SearchBar />
@@ -152,17 +129,17 @@ export default async function SalonUnasPage({
         </div>
       </section>
 
-      {/* ── SERVICES GRID ───────────────────────────────────────── */}
+      {/* SERVICES GRID */}
       <section id="servicios" className="py-16 px-6 bg-[#f7f7f7]">
         <div className="max-w-6xl mx-auto">
           <div className="mb-10 text-center">
             <h2 className="text-3xl font-bold text-[#222222] mb-2">
-              {query ? `Resultados para "${q}"` : "Nuestros servicios"}
+              {query ? `Resultados para "${q}"` : 'Nuestros servicios'}
             </h2>
             <p className="text-[#6a6a6a]">
               {query
-                ? `${services.length} servicio${services.length !== 1 ? "s" : ""} encontrado${services.length !== 1 ? "s" : ""}`
-                : "Cada servicio incluye atención personalizada y materiales de calidad"}
+                ? `${services.length} servicio${services.length !== 1 ? 's' : ''} encontrado${services.length !== 1 ? 's' : ''}`
+                : 'Cada servicio incluye atención personalizada y materiales de calidad'}
             </p>
             {query && (
               <Link href="/salon-unas#servicios" className="inline-block mt-2 text-sm underline" style={{ color: BRAND }}>
@@ -183,23 +160,30 @@ export default async function SalonUnasPage({
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service) => (
+            {services.map(service => (
               <div
                 key={service.slug}
                 className="bg-white rounded-2xl overflow-hidden flex flex-col"
-                style={{ boxShadow: "0 1px 8px rgba(0,0,0,0.06)" }}
+                style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}
               >
-                {/* Service photo */}
                 <div className="relative h-44 w-full overflow-hidden">
-                  <Image
-                    src={service.image}
-                    alt={service.name}
-                    fill
-                    className="object-cover transition-transform duration-500 hover:scale-105"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
+                  {service.image_url ? (
+                    <Image
+                      src={service.image_url}
+                      alt={service.name}
+                      fill
+                      className="object-cover transition-transform duration-500 hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                  ) : (
+                    <div
+                      className="h-full flex items-center justify-center text-5xl"
+                      style={{ background: `linear-gradient(135deg, ${service.gradient_from}, ${service.gradient_to})` }}
+                    >
+                      {service.emoji}
+                    </div>
+                  )}
                 </div>
-                {/* Content */}
                 <div className="p-5 flex flex-col flex-1 gap-2">
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">{service.emoji}</span>
@@ -228,7 +212,7 @@ export default async function SalonUnasPage({
         </div>
       </section>
 
-      {/* ── GALLERY ─────────────────────────────────────────────── */}
+      {/* GALLERY */}
       <section id="galeria" className="py-16 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="mb-10 text-center">
@@ -237,10 +221,10 @@ export default async function SalonUnasPage({
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {gallery.map((item, i) => (
-              <div key={i} className="relative rounded-2xl overflow-hidden aspect-square group cursor-pointer">
+              <div key={item.id ?? i} className="relative rounded-2xl overflow-hidden aspect-square group cursor-pointer">
                 <Image
-                  src={item.src}
-                  alt={item.alt}
+                  src={item.image_url}
+                  alt={item.alt_text ?? ''}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                   sizes="(max-width: 640px) 50vw, 25vw"
@@ -252,7 +236,7 @@ export default async function SalonUnasPage({
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ────────────────────────────────────────── */}
+      {/* TESTIMONIALS */}
       <section id="opiniones" className="py-16 px-6 bg-[#f7f7f7]">
         <div className="max-w-5xl mx-auto">
           <div className="mb-10 text-center">
@@ -260,22 +244,22 @@ export default async function SalonUnasPage({
             <p className="text-[#6a6a6a]">4.9 estrellas en promedio · 280+ opiniones verificadas</p>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6" style={{ boxShadow: "0 1px 8px rgba(0,0,0,0.06)" }}>
+            {testimonials.map(t => (
+              <div key={t.id} className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}>
                 <div className="flex gap-0.5 mb-3">
                   {Array.from({ length: t.stars }).map((_, s) => (
                     <span key={s} style={{ color: BRAND }}>★</span>
                   ))}
                 </div>
                 <p className="text-sm text-[#3f3f3f] leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
-                <p className="text-sm font-semibold text-[#222222]">{t.name}</p>
+                <p className="text-sm font-semibold text-[#222222]">{t.customer_name}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── BOOKING CTA ─────────────────────────────────────────── */}
+      {/* BOOKING CTA */}
       <section id="reservar" className="py-20 px-6" style={{ background: BRAND }}>
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-3">Tu siguiente cita está a un clic</h2>
@@ -285,14 +269,14 @@ export default async function SalonUnasPage({
           <a
             href="#contacto"
             className="inline-block px-8 py-3.5 rounded-full font-semibold text-sm transition-opacity hover:opacity-90"
-            style={{ background: "#ffffff", color: BRAND }}
+            style={{ background: '#ffffff', color: BRAND }}
           >
             Escribirnos por WhatsApp
           </a>
         </div>
       </section>
 
-      {/* ── FOOTER ──────────────────────────────────────────────── */}
+      {/* FOOTER */}
       <footer id="contacto" className="bg-[#222222] text-white py-16 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="flex flex-col gap-6">
@@ -307,11 +291,11 @@ export default async function SalonUnasPage({
             </div>
             <div className="flex flex-col gap-4">
               {[
-                { icon: "📍", label: "Dirección", value: "Col. Escalón, San Salvador, El Salvador", href: undefined },
-                { icon: "📞", label: "Teléfono / WhatsApp", value: "+503 7890-1234", href: "tel:+50378901234" },
-                { icon: "🕐", label: "Horario", value: "Lunes a Sábado · 8:00 am – 7:00 pm", href: undefined },
-                { icon: "📸", label: "Instagram", value: "@nailsbymariela.sv", href: "#" },
-              ].map((item) => (
+                { icon: '📍', label: 'Dirección',             value: 'Col. Escalón, San Salvador, El Salvador', href: undefined },
+                { icon: '📞', label: 'Teléfono / WhatsApp',   value: '+503 7890-1234', href: 'tel:+50378901234' },
+                { icon: '🕐', label: 'Horario',               value: 'Lunes a Sábado · 8:00 am – 7:00 pm', href: undefined },
+                { icon: '📸', label: 'Instagram',             value: '@nailsbymariela.sv', href: '#' },
+              ].map(item => (
                 <div key={item.label} className="flex items-start gap-3">
                   <span className="text-lg mt-0.5">{item.icon}</span>
                   <div>
@@ -342,7 +326,7 @@ export default async function SalonUnasPage({
                 <label className="block text-xs font-semibold text-[#929292] uppercase tracking-wide mb-1.5">Servicio de interés</label>
                 <select className="w-full bg-white/8 border border-white/15 rounded-xl px-4 py-3 text-sm text-white/70 outline-none focus:border-white/40 transition-colors">
                   <option value="">Selecciona un servicio...</option>
-                  {allServices.map((s) => (
+                  {allServices.map(s => (
                     <option key={s.slug} value={s.slug}>{s.name} — desde ${s.price}</option>
                   ))}
                 </select>
@@ -360,9 +344,9 @@ export default async function SalonUnasPage({
 
         <div className="max-w-6xl mx-auto mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-[#6a6a6a]">© {new Date().getFullYear()} Nails by Mariela · San Salvador, El Salvador</p>
-          <p className="text-xs text-[#6a6a6a]">Hecho con amor para clientas que merecen lo mejor 💅</p>
+          <p className="text-xs text-[#6a6a6a]">Hecho con amor para clientas que merecen lo mejor</p>
         </div>
       </footer>
     </div>
-  );
+  )
 }
