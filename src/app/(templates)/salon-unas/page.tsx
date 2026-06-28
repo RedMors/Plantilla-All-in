@@ -1,12 +1,28 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Suspense } from 'react'
+import { Star, Calendar, Award, ShieldCheck, MapPin, Phone, Clock, Camera, Scissors } from 'lucide-react'
 import { getServices, getGallery, getTestimonials } from '@/lib/salon/queries'
 import SearchBar from './SearchBar'
+import MobileNav from './MobileNav'
 
 export const dynamic = 'force-dynamic'
 
 const BRAND = '#ff385c'
+
+const STATS = [
+  { Icon: Star,         label: '4.9 / 5',             sub: '280+ reseñas' },
+  { Icon: Calendar,     label: 'Lun – Sáb',           sub: '8:00 am – 7:00 pm' },
+  { Icon: Award,        label: '5 años',               sub: 'de experiencia' },
+  { Icon: ShieldCheck,  label: 'Higiene garantizada',  sub: 'Materiales desechables' },
+]
+
+const CONTACT = [
+  { Icon: MapPin,    label: 'Dirección',           value: 'Col. Escalón, San Salvador, El Salvador', href: undefined },
+  { Icon: Phone,     label: 'Teléfono / WhatsApp', value: '+503 7890-1234',                          href: 'tel:+50378901234' },
+  { Icon: Clock,     label: 'Horario',             value: 'Lunes a Sábado · 8:00 am – 7:00 pm',    href: undefined },
+  { Icon: Camera,    label: 'Instagram',           value: '@nailsbymariela.sv',                      href: '#' },
+]
 
 export default async function SalonUnasPage({
   searchParams,
@@ -34,7 +50,7 @@ export default async function SalonUnasPage({
       className="min-h-screen bg-white text-[#222222]"
     >
       {/* NAV */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#ebebeb]">
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#ebebeb] relative">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
           <a href="/salon-unas" className="flex items-center gap-2.5 shrink-0">
             <span
@@ -45,19 +61,33 @@ export default async function SalonUnasPage({
             </span>
             <span className="font-semibold text-[#222222] hidden sm:block">Nails by Mariela</span>
           </a>
+
+          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#servicios" className="text-sm font-medium text-[#3f3f3f] hover:text-[#222222] transition-colors">Servicios</a>
-            <a href="#galeria"   className="text-sm font-medium text-[#3f3f3f] hover:text-[#222222] transition-colors">Galería</a>
-            <a href="#opiniones" className="text-sm font-medium text-[#3f3f3f] hover:text-[#222222] transition-colors">Opiniones</a>
-            <a href="#contacto"  className="text-sm font-medium text-[#3f3f3f] hover:text-[#222222] transition-colors">Contacto</a>
+            {[
+              { href: '#servicios', label: 'Servicios' },
+              { href: '#galeria',   label: 'Galería' },
+              { href: '#opiniones', label: 'Opiniones' },
+              { href: '#contacto',  label: 'Contacto' },
+            ].map(l => (
+              <a key={l.href} href={l.href} className="text-sm font-medium text-[#3f3f3f] hover:text-[#222222] transition-colors">
+                {l.label}
+              </a>
+            ))}
           </nav>
-          <a
-            href="#reservar"
-            className="shrink-0 px-5 py-2 rounded-full text-sm font-semibold text-white transition-opacity hover:opacity-90"
-            style={{ background: BRAND }}
-          >
-            Reservar cita
-          </a>
+
+          <div className="flex items-center gap-2">
+            {/* Mobile hamburger */}
+            <MobileNav />
+            {/* CTA — always visible */}
+            <a
+              href="#reservar"
+              className="shrink-0 px-5 py-2 rounded-full text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              style={{ background: BRAND }}
+            >
+              Reservar cita
+            </a>
+          </div>
         </div>
       </header>
 
@@ -105,18 +135,14 @@ export default async function SalonUnasPage({
           </div>
         </div>
 
+        {/* STATS */}
         <div className="border-b border-[#ebebeb]">
           <div className="max-w-4xl mx-auto px-6 py-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-            {[
-              { icon: '⭐', label: '4.9 / 5', sub: '280+ reseñas' },
-              { icon: '📅', label: 'Lun – Sáb', sub: '8:00 am – 7:00 pm' },
-              { icon: '🏅', label: '5 años', sub: 'de experiencia' },
-              { icon: '✅', label: 'Higiene garantizada', sub: 'Materiales desechables' },
-            ].map(item => (
-              <div key={item.label} className="flex flex-col items-center gap-0.5">
-                <span className="text-xl">{item.icon}</span>
-                <p className="text-sm font-semibold text-[#222222]">{item.label}</p>
-                <p className="text-xs text-[#6a6a6a]">{item.sub}</p>
+            {STATS.map(({ Icon, label, sub }) => (
+              <div key={label} className="flex flex-col items-center gap-1">
+                <Icon size={20} color={BRAND} strokeWidth={1.8} />
+                <p className="text-sm font-semibold text-[#222222]">{label}</p>
+                <p className="text-xs text-[#6a6a6a]">{sub}</p>
               </div>
             ))}
           </div>
@@ -150,7 +176,7 @@ export default async function SalonUnasPage({
 
           {services.length === 0 && (
             <div className="text-center py-16">
-              <p className="text-5xl mb-4">🔍</p>
+              <Scissors size={48} className="mx-auto mb-4 text-[#ccc]" />
               <p className="text-lg font-semibold text-[#222222] mb-2">Sin resultados para &ldquo;{q}&rdquo;</p>
               <p className="text-sm text-[#6a6a6a] mb-6">Prueba con &quot;manicure&quot;, &quot;pedicure&quot; o &quot;nail art&quot;</p>
               <Link href="/salon-unas#servicios" className="px-6 py-2.5 rounded-full text-sm font-semibold text-white" style={{ background: BRAND }}>
@@ -166,7 +192,7 @@ export default async function SalonUnasPage({
                 className="bg-white rounded-2xl overflow-hidden flex flex-col"
                 style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}
               >
-                <div className="relative h-44 w-full overflow-hidden">
+                <div className="relative h-44 w-full overflow-hidden bg-[#f7f7f7]">
                   {service.image_url ? (
                     <Image
                       src={service.image_url}
@@ -177,20 +203,17 @@ export default async function SalonUnasPage({
                     />
                   ) : (
                     <div
-                      className="h-full flex items-center justify-center text-5xl"
-                      style={{ background: `linear-gradient(135deg, ${service.gradient_from}, ${service.gradient_to})` }}
+                      className="h-full flex items-center justify-center"
+                      style={{ background: `linear-gradient(135deg, ${service.gradient_from ?? '#fda4af'}, ${service.gradient_to ?? '#fb7185'})` }}
                     >
-                      {service.emoji}
+                      <Scissors size={36} className="text-white/70" />
                     </div>
                   )}
                 </div>
                 <div className="p-5 flex flex-col flex-1 gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">{service.emoji}</span>
-                    <h3 className="font-bold text-[#222222] text-base">{service.name}</h3>
-                  </div>
+                  <h3 className="font-bold text-[#222222] text-base">{service.name}</h3>
                   <p className="text-sm text-[#6a6a6a] leading-relaxed flex-1 line-clamp-3">
-                    {service.description}
+                    {service.description ?? service.tagline}
                   </p>
                   <div className="flex items-center justify-between pt-3 border-t border-[#ebebeb] mt-1">
                     <div>
@@ -248,7 +271,7 @@ export default async function SalonUnasPage({
               <div key={t.id} className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}>
                 <div className="flex gap-0.5 mb-3">
                   {Array.from({ length: t.stars }).map((_, s) => (
-                    <span key={s} style={{ color: BRAND }}>★</span>
+                    <Star key={s} size={14} fill={BRAND} color={BRAND} />
                   ))}
                 </div>
                 <p className="text-sm text-[#3f3f3f] leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
@@ -290,20 +313,15 @@ export default async function SalonUnasPage({
               </p>
             </div>
             <div className="flex flex-col gap-4">
-              {[
-                { icon: '📍', label: 'Dirección',             value: 'Col. Escalón, San Salvador, El Salvador', href: undefined },
-                { icon: '📞', label: 'Teléfono / WhatsApp',   value: '+503 7890-1234', href: 'tel:+50378901234' },
-                { icon: '🕐', label: 'Horario',               value: 'Lunes a Sábado · 8:00 am – 7:00 pm', href: undefined },
-                { icon: '📸', label: 'Instagram',             value: '@nailsbymariela.sv', href: '#' },
-              ].map(item => (
-                <div key={item.label} className="flex items-start gap-3">
-                  <span className="text-lg mt-0.5">{item.icon}</span>
+              {CONTACT.map(({ Icon, label, value, href }) => (
+                <div key={label} className="flex items-start gap-3">
+                  <Icon size={16} className="mt-0.5 shrink-0 text-[#929292]" />
                   <div>
-                    <p className="text-xs font-semibold text-[#929292] uppercase tracking-wide mb-0.5">{item.label}</p>
-                    {item.href ? (
-                      <a href={item.href} className="text-sm text-white/70 hover:text-white transition-colors">{item.value}</a>
+                    <p className="text-xs font-semibold text-[#929292] uppercase tracking-wide mb-0.5">{label}</p>
+                    {href ? (
+                      <a href={href} className="text-sm text-white/70 hover:text-white transition-colors">{value}</a>
                     ) : (
-                      <p className="text-sm text-white/70">{item.value}</p>
+                      <p className="text-sm text-white/70">{value}</p>
                     )}
                   </div>
                 </div>
