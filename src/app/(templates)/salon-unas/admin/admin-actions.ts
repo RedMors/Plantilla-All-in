@@ -57,23 +57,44 @@ function slugify(text: string) {
     .replace(/(^-|-$)/g, '')
 }
 
+async function uploadServiceImage(file: File, slug: string): Promise<string | null> {
+  const db = adminDb()
+  const ext = file.name.split('.').pop() ?? 'jpg'
+  const path = `salon/${slug}-${Date.now()}.${ext}`
+  const buffer = Buffer.from(await file.arrayBuffer())
+
+  const { error } = await db.storage.from('servicios').upload(path, buffer, {
+    contentType: file.type,
+    upsert: true,
+  })
+  if (error) return null
+
+  const { data } = db.storage.from('servicios').getPublicUrl(path)
+  return data.publicUrl
+}
+
 export async function createService(formData: FormData) {
   const name = (formData.get('name') as string)?.trim()
   const slug = (formData.get('slug') as string)?.trim() || slugify(name)
-  const emoji = (formData.get('emoji') as string)?.trim() || null
   const tagline = (formData.get('tagline') as string)?.trim() || null
   const description = (formData.get('description') as string)?.trim() || null
   const price = parseFloat(formData.get('price') as string)
   const sort_order = parseInt(formData.get('sort_order') as string) || 0
   const includesRaw = (formData.get('includes') as string)?.trim()
   const includes = includesRaw ? includesRaw.split('\n').map(s => s.trim()).filter(Boolean) : []
+  const imageFile = formData.get('image') as File | null
 
   if (!name || isNaN(price) || price < 0) return { error: 'Nombre y precio son requeridos.' }
   if (!slug) return { error: 'Slug inválido.' }
 
+  let image_url: string | null = null
+  if (imageFile && imageFile.size > 0) {
+    image_url = await uploadServiceImage(imageFile, slug)
+  }
+
   const db = adminDb()
   const { error } = await db.from('nail_services').insert({
-    name, slug, emoji, tagline, description, price, sort_order, includes, active: true,
+    name, slug, tagline, description, price, sort_order, includes, image_url, active: true,
   })
 
   if (error) {
@@ -89,19 +110,25 @@ export async function updateService(formData: FormData) {
   const id = formData.get('id') as string
   const name = (formData.get('name') as string)?.trim()
   const slug = (formData.get('slug') as string)?.trim()
-  const emoji = (formData.get('emoji') as string)?.trim() || null
   const tagline = (formData.get('tagline') as string)?.trim() || null
   const description = (formData.get('description') as string)?.trim() || null
   const price = parseFloat(formData.get('price') as string)
   const sort_order = parseInt(formData.get('sort_order') as string) || 0
   const includesRaw = (formData.get('includes') as string)?.trim()
   const includes = includesRaw ? includesRaw.split('\n').map(s => s.trim()).filter(Boolean) : []
+  const imageFile = formData.get('image') as File | null
+  const existingUrl = (formData.get('image_url') as string) || null
 
   if (!id || !name || isNaN(price) || price < 0) return { error: 'Datos inválidos.' }
 
+  let image_url = existingUrl
+  if (imageFile && imageFile.size > 0) {
+    image_url = await uploadServiceImage(imageFile, slug)
+  }
+
   const db = adminDb()
   const { error } = await db.from('nail_services').update({
-    name, slug, emoji, tagline, description, price, sort_order, includes,
+    name, slug, tagline, description, price, sort_order, includes, image_url,
   }).eq('id', id)
 
   if (error) return { error: 'No se pudo actualizar el servicio.' }

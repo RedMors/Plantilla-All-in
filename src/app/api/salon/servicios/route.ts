@@ -9,7 +9,7 @@ export async function GET() {
 
   const { data, error } = await adminDb()
     .from('nail_services')
-    .select('id,slug,emoji,name,tagline,description,price,sort_order,includes,active')
+    .select('id,slug,name,tagline,description,price,sort_order,includes,image_url,active')
     .order('sort_order')
     .order('name')
 
