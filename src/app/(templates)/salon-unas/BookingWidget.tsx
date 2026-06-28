@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { CheckCircle } from 'lucide-react'
 import { bookAppointment } from './actions'
 
 const BRAND = '#ff385c'
@@ -79,7 +80,7 @@ export default function BookingWidget({ serviceId, serviceName, servicePrice, va
   if (step === 'success') {
     return (
       <div className="sticky top-24 rounded-3xl border border-[#dddddd] p-6 shadow-sm bg-white text-center">
-        <div className="text-5xl mb-3">✅</div>
+        <CheckCircle size={48} color={BRAND} className="mx-auto mb-3" />
         <h3 className="font-bold text-[#222222] text-lg mb-2">¡Cita reservada!</h3>
         <p className="text-sm font-semibold text-[#222222] mb-1">{serviceName}</p>
         <p className="text-sm text-[#6a6a6a] mb-1">{dateLabel}</p>

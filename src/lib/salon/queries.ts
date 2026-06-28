@@ -1,11 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
+import { cache } from 'react'
 
-function db() {
-  return createClient(
+const db = cache(() =>
+  createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
-}
+)
 
 export type NailService = {
   id: string
@@ -98,6 +99,7 @@ export async function getGallery(): Promise<NailGallery[]> {
     .select('id,image_url,alt_text')
     .eq('active', true)
     .order('sort_order')
+    .limit(48)
   if (error) throw new Error(`[nail_gallery] ${error.message}`)
   return data ?? []
 }
@@ -107,6 +109,7 @@ export async function getTestimonials(): Promise<NailTestimonial[]> {
     .from('nail_testimonials')
     .select('id,customer_name,text,stars')
     .eq('active', true)
+    .limit(30)
   if (error) throw new Error(`[nail_testimonials] ${error.message}`)
   return data ?? []
 }
