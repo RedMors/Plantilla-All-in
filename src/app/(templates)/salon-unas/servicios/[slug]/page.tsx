@@ -1,5 +1,5 @@
-import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import {
   getServiceBySlug,
   getVariants,
@@ -29,7 +29,7 @@ export default async function ServiceDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const [service, ] = await Promise.all([getServiceBySlug(slug)])
+  const service = await getServiceBySlug(slug)
   if (!service) notFound()
 
   const [variants, related, takenSlots, testimonials] = await Promise.all([
@@ -44,31 +44,8 @@ export default async function ServiceDetailPage({
     : undefined
 
   return (
-    <div
-      style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-      className="min-h-screen bg-white text-[#222222]"
-    >
-      <header className="sticky top-0 z-50 bg-white border-b border-[#dddddd]">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-          <Link href="/salon-unas" className="flex items-center gap-2 shrink-0">
-            <span
-              className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
-              style={{ background: BRAND }}
-            >
-              N
-            </span>
-            <span className="font-semibold text-[#222222] hidden sm:block">Nails by Mariela</span>
-          </Link>
-          <Link
-            href="/salon-unas#reservar"
-            className="shrink-0 px-5 py-2 rounded-full text-sm font-semibold text-white transition-opacity hover:opacity-90"
-            style={{ background: BRAND }}
-          >
-            Reservar cita
-          </Link>
-        </div>
-      </header>
-
+    <>
+      {/* Service hero */}
       <section className="relative overflow-hidden">
         <div
           className="absolute inset-0"
@@ -78,21 +55,20 @@ export default async function ServiceDetailPage({
           }}
         />
         <div className="relative max-w-6xl mx-auto px-6 pt-14 pb-12">
+          {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-[#6a6a6a] mb-6">
             <Link href="/salon-unas" className="hover:underline">Inicio</Link>
             <span>/</span>
-            <Link href="/salon-unas#servicios" className="hover:underline">Servicios</Link>
+            <Link href="/salon-unas/servicios" className="hover:underline">Servicios</Link>
             <span>/</span>
             <span className="text-[#222222] font-medium">{service.name}</span>
           </nav>
 
           <div className="flex items-start gap-6">
             <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl shrink-0"
+              className="w-20 h-20 rounded-2xl shrink-0"
               style={{ background: `linear-gradient(135deg, ${service.gradient_from}, ${service.gradient_to})` }}
-            >
-              {service.emoji}
-            </div>
+            />
             <div>
               <p className="text-sm font-medium mb-1" style={{ color: BRAND }}>{service.tagline}</p>
               <h1 className="text-4xl font-bold text-[#222222] mb-3 leading-tight">{service.name}</h1>
@@ -102,6 +78,7 @@ export default async function ServiceDetailPage({
         </div>
       </section>
 
+      {/* Detail + Booking */}
       <div className="max-w-6xl mx-auto px-6 py-12">
         <div className="grid lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2 space-y-12">
@@ -129,7 +106,7 @@ export default async function ServiceDetailPage({
                         {variant.description}
                         {variant.duration !== '-' && (
                           <span className="ml-2 inline-flex items-center gap-1 text-xs text-[#929292]">
-                            ⏱ {variant.duration}
+                            {variant.duration}
                           </span>
                         )}
                       </p>
@@ -193,11 +170,9 @@ export default async function ServiceDetailPage({
                   className="group flex flex-col rounded-2xl border border-[#dddddd] overflow-hidden hover:shadow-md transition-shadow"
                 >
                   <div
-                    className="h-28 flex items-center justify-center text-4xl"
+                    className="h-28"
                     style={{ background: `linear-gradient(135deg, ${rel.gradient_from}, ${rel.gradient_to})` }}
-                  >
-                    {rel.emoji}
-                  </div>
+                  />
                   <div className="p-4 flex-1 flex flex-col">
                     <p className="font-semibold text-[#222222] mb-1 group-hover:underline">{rel.name}</p>
                     <p className="text-sm text-[#6a6a6a] flex-1 mb-3 line-clamp-2">{rel.tagline}</p>
@@ -217,6 +192,6 @@ export default async function ServiceDetailPage({
           </section>
         )}
       </div>
-    </div>
+    </>
   )
 }
