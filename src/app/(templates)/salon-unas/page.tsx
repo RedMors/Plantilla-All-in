@@ -156,7 +156,7 @@ export default async function SalonUnasPage({
       </section>
 
       {/* SERVICES GRID */}
-      <section id="servicios" className="py-16 px-6 bg-[#f7f7f7]">
+      <section id="servicios" className="py-16 px-6 bg-[#f7f7f7] scroll-mt-16">
         <div className="max-w-6xl mx-auto">
           <div className="mb-10 text-center">
             <h2 className="text-3xl font-bold text-[#222222] mb-2">
@@ -236,7 +236,7 @@ export default async function SalonUnasPage({
       </section>
 
       {/* GALLERY */}
-      <section id="galeria" className="py-16 px-6 bg-white">
+      <section id="galeria" className="py-16 px-6 bg-white scroll-mt-16">
         <div className="max-w-6xl mx-auto">
           <div className="mb-10 text-center">
             <h2 className="text-3xl font-bold text-[#222222] mb-2">Nuestro trabajo</h2>
@@ -260,7 +260,7 @@ export default async function SalonUnasPage({
       </section>
 
       {/* TESTIMONIALS */}
-      <section id="opiniones" className="py-16 px-6 bg-[#f7f7f7]">
+      <section id="opiniones" className="py-16 px-6 bg-[#f7f7f7] scroll-mt-16">
         <div className="max-w-5xl mx-auto">
           <div className="mb-10 text-center">
             <h2 className="text-3xl font-bold text-[#222222] mb-2">Lo que dicen nuestras clientas</h2>
@@ -283,7 +283,7 @@ export default async function SalonUnasPage({
       </section>
 
       {/* BOOKING CTA */}
-      <section id="reservar" className="py-20 px-6" style={{ background: BRAND }}>
+      <section id="reservar" className="py-20 px-6 scroll-mt-16" style={{ background: BRAND }}>
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-white mb-3">Tu siguiente cita está a un clic</h2>
           <p className="text-white/80 text-base mb-8 leading-relaxed">
@@ -300,7 +300,7 @@ export default async function SalonUnasPage({
       </section>
 
       {/* FOOTER */}
-      <footer id="contacto" className="bg-[#222222] text-white py-16 px-6">
+      <footer id="contacto" className="bg-[#222222] text-white py-16 px-6 scroll-mt-16">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="flex flex-col gap-6">
             <div>
