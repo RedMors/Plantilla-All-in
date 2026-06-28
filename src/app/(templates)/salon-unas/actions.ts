@@ -1,14 +1,7 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { adminDb } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
-
-function adminDb() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
-}
 
 export type BookingResult = { success: true } | { error: string }
 
@@ -50,7 +43,11 @@ export async function bookAppointment(formData: FormData): Promise<BookingResult
     status: 'pending',
   })
 
-  if (error) return { error: 'No se pudo guardar tu cita. Intenta de nuevo.' }
+  if (error) {
+    if (error.code === '23505')
+      return { error: 'Este horario ya fue reservado. Elige otro.' }
+    return { error: 'No se pudo guardar tu cita. Intenta de nuevo.' }
+  }
 
   revalidatePath('/salon-unas')
   return { success: true }

@@ -23,8 +23,12 @@ export async function addManualSale(formData: FormData) {
   const sale_date = formData.get('sale_date') as string
   const notes = (formData.get('notes') as string)?.trim() || null
 
+  const VALID_PAYMENT_METHODS = ['efectivo', 'transferencia', 'tarjeta']
   if (!description || isNaN(amount) || amount <= 0) {
     return { error: 'Descripción y monto son requeridos.' }
+  }
+  if (!VALID_PAYMENT_METHODS.includes(payment_method)) {
+    return { error: 'Método de pago inválido.' }
   }
 
   const db = adminDb()
