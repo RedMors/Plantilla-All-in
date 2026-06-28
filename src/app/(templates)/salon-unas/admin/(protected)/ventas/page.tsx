@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { addManualSale } from '../admin-actions'
+import { addManualSale } from '../../admin-actions'
 
 const BRAND = '#ff385c'
 

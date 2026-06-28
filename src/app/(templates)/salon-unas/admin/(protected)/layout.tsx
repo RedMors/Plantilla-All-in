@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { signOut } from './auth-actions'
+import { signOut } from '../auth-actions'
 import Link from 'next/link'
 
 const BRAND = '#ff385c'

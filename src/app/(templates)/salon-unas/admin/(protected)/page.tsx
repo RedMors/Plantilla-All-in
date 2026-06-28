@@ -1,5 +1,5 @@
 import { adminDb } from '@/lib/supabase/admin'
-import { updateAppointmentStatus } from './admin-actions'
+import { updateAppointmentStatus } from '../admin-actions'
 
 export const dynamic = 'force-dynamic'
 
