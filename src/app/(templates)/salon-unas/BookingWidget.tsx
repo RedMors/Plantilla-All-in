@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react'
 import { bookAppointment } from './actions'
-import { BRAND, INK, CREAM, STONE } from './constants'
+import { BRAND, BRAND_LIGHT, INK, CREAM, STONE } from './constants'
 
 type Variant = { id: string; name: string; price: number; duration: string }
 
@@ -278,7 +278,7 @@ export default function BookingWidget({
                     : isSelected
                     ? BRAND
                     : '#6B6560',
-                  background: isSelected ? '#F0E4CF' : 'transparent',
+                  background: isSelected ? BRAND_LIGHT : 'transparent',
                   textDecoration: isTaken ? 'line-through' : 'none',
                   cursor: isTaken ? 'not-allowed' : 'pointer',
                 }}

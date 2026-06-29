@@ -43,7 +43,7 @@ export default async function GaleriaPage() {
         ) : (
           <>
             {/* Grid masonry simulado con columnas CSS */}
-            <div className="columns-2 sm:columns-3 lg:columns-4 gap-3 space-y-3">
+            <div className="columns-2 sm:columns-3 lg:columns-4 gap-3">
               {gallery.map((item, i) => (
                 <div
                   key={item.id ?? i}
@@ -55,9 +55,8 @@ export default async function GaleriaPage() {
                       src={item.image_url}
                       alt={item.alt_text ?? ''}
                       fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-108"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      style={{ transform: 'scale(1)' }}
                     />
                     <div className="absolute inset-0 bg-[#0B0B0B]/0 group-hover:bg-[#0B0B0B]/30 transition-all duration-300 flex items-end p-4">
                       {item.alt_text && (
