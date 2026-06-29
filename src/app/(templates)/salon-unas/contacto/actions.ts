@@ -17,10 +17,11 @@ export async function sendContactMessage(
   _prev: ContactResult | null,
   formData: FormData
 ): Promise<ContactResult> {
-  const name    = (formData.get('nombre')   as string | null)?.trim() ?? ''
-  const phone   = (formData.get('telefono') as string | null)?.trim() ?? ''
-  const message = (formData.get('mensaje')  as string | null)?.trim() ?? ''
-  const service = (formData.get('servicio') as string | null)?.trim() ?? ''
+  const name    = (formData.get('nombre')        as string | null)?.trim() ?? ''
+  const phone   = ((formData.get('telefono_full') as string | null)?.trim()
+               || (formData.get('telefono')      as string | null)?.trim()) ?? ''
+  const message = (formData.get('mensaje')       as string | null)?.trim() ?? ''
+  const service = (formData.get('servicio')      as string | null)?.trim() ?? ''
 
   if (!name || !phone || !message) {
     return { error: 'Nombre, teléfono y mensaje son requeridos.' }

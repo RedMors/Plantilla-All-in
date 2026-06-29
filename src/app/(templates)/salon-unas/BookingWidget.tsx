@@ -37,11 +37,6 @@ function todayStr() {
   return new Date().toISOString().split('T')[0]
 }
 
-function generateRef(date: string): string {
-  const d = date.replace(/-/g, '')
-  const rand = Math.random().toString(36).substring(2, 6).toUpperCase()
-  return `NBM-${d}-${rand}`
-}
 
 const inputClass =
   'w-full border-b border-[#EDE9E3] bg-transparent px-0 py-2.5 text-sm text-[#1A1A1A] placeholder-[#B0A89E] outline-none focus:border-[#C4965A] transition-colors'
@@ -96,8 +91,6 @@ export default function BookingWidget({
     e.preventDefault()
     if (!phone) { setErrorMsg('El teléfono es requerido'); return }
     setErrorMsg('')
-    const ref = generateRef(date)
-    setRefCode(ref)
     const fd = new FormData()
     fd.set('service_id', serviceId)
     fd.set('variant_id', variantId)
@@ -108,12 +101,12 @@ export default function BookingWidget({
     fd.set('customer_email', email)
     fd.set('message', message)
     fd.set('payment_method', payMethod)
-    fd.set('reference_code', ref)
     startTransition(async () => {
       const result = await bookAppointment(fd)
       if ('error' in result) {
         setErrorMsg(result.error)
       } else {
+        setRefCode(result.refCode)
         setStep('success')
       }
     })

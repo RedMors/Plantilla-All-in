@@ -46,15 +46,6 @@ export default function PhoneInput({ name, required, value, onChange, placeholde
   const [country, setCountry] = useState<Country>(COUNTRIES[0])
   const [local, setLocal] = useState('')
 
-  function handleCountryChange(dial: string) {
-    const found = COUNTRIES.find(c => c.dial === dial && c.code === (
-      COUNTRIES.find(x => x.dial === dial)?.code ?? ''
-    )) ?? COUNTRIES.find(c => c.dial === dial) ?? COUNTRIES[0]
-    setCountry(found)
-    setLocal('')
-    onChange('')
-  }
-
   function handleNumberChange(raw: string) {
     const digits = raw.replace(/\D/g, '').slice(0, country.max)
     setLocal(digits)
