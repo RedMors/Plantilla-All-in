@@ -2,8 +2,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import ServiceImage from '@/components/salon/ServiceImage'
 import { Suspense } from 'react'
-import { Star, Calendar, Award, ShieldCheck, Scissors, ArrowRight, Images, MessageCircle, Phone } from 'lucide-react'
-import { getServices, getRatingStats } from '@/lib/salon/queries'
+import { Calendar, Award, ShieldCheck, Scissors, ArrowRight, Images, Phone } from 'lucide-react'
+import { getServices } from '@/lib/salon/queries'
 import SearchBar from './SearchBar'
 import { BRAND } from './constants'
 
@@ -16,17 +16,13 @@ const STATIC_STATS = [
 ]
 
 const SECTION_CARDS = [
-  { href: '/salon-unas-lite/servicios', Icon: Scissors,       title: 'Servicios',  desc: 'Manicure, pedicure, nail art y más. Elige lo que más te gusta.' },
-  { href: '/salon-unas-lite/galeria',   Icon: Images,          title: 'Galería',    desc: 'Mira nuestros trabajos más recientes hechos por Mariela.' },
-  { href: '/salon-unas-lite/opiniones', Icon: MessageCircle,   title: 'Opiniones',  desc: 'Lo que dicen nuestras clientas sobre cada visita.' },
-  { href: '/salon-unas-lite/contacto',  Icon: Phone,           title: 'Contacto',   desc: 'Escríbenos para agendar o resolver cualquier duda.' },
+  { href: '/salon-unas-lite/servicios', Icon: Scissors, title: 'Servicios', desc: 'Manicure, pedicure, nail art y más. Elige lo que más te gusta.' },
+  { href: '/salon-unas-lite/galeria',   Icon: Images,   title: 'Galería',   desc: 'Mira nuestros trabajos más recientes hechos por Mariela.' },
+  { href: '/salon-unas-lite/contacto',  Icon: Phone,    title: 'Contacto',  desc: 'Escríbenos para agendar o resolver cualquier duda.' },
 ]
 
 export default async function SalonUnasHome() {
-  const [featured, ratingStats] = await Promise.all([
-    getServices(3),
-    getRatingStats(),
-  ])
+  const featured = await getServices(3)
 
   return (
     <>
@@ -76,14 +72,7 @@ export default async function SalonUnasHome() {
 
         {/* STATS */}
         <div className="border-b border-[#ebebeb]">
-          <div className="max-w-4xl mx-auto px-6 py-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-            {ratingStats && (
-              <div className="flex flex-col items-center gap-1">
-                <Star size={20} color={BRAND} strokeWidth={1.8} />
-                <p className="text-sm font-semibold text-[#222222]">{ratingStats.avg} / 5</p>
-                <p className="text-xs text-[#6a6a6a]">{ratingStats.count} reseñas</p>
-              </div>
-            )}
+          <div className="max-w-4xl mx-auto px-6 py-5 grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
             {STATIC_STATS.map(({ Icon, label, sub }) => (
               <div key={label} className="flex flex-col items-center gap-1">
                 <Icon size={20} color={BRAND} strokeWidth={1.8} />

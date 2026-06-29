@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Suspense } from 'react'
-import { ArrowRight, Star } from 'lucide-react'
-import { getServices, getRatingStats } from '@/lib/salon/queries'
+import { ArrowRight } from 'lucide-react'
+import { getServices } from '@/lib/salon/queries'
 import ServiceImage from '@/components/salon/ServiceImage'
 import SearchBar from './SearchBar'
 import { BRAND, INK, CREAM } from './constants'
@@ -19,15 +19,11 @@ const PILLARS = [
 const SECTION_LINKS = [
   { href: '/salon-unas/servicios', label: 'Servicios', desc: 'Manicure, pedicure, nail art, acrílicas y más.' },
   { href: '/salon-unas/galeria',   label: 'Galería',   desc: 'Trabajos reales, resultados que hablan solos.' },
-  { href: '/salon-unas/opiniones', label: 'Opiniones', desc: 'Lo que dicen quienes ya nos visitaron.' },
   { href: '/salon-unas/contacto',  label: 'Contacto',  desc: 'Reserva tu cita o escríbenos.' },
 ]
 
 export default async function SalonUnasHome() {
-  const [featured, ratingStats] = await Promise.all([
-    getServices(3),
-    getRatingStats(),
-  ])
+  const featured = await getServices(3)
 
   return (
     <>
@@ -83,17 +79,6 @@ export default async function SalonUnasHome() {
             </div>
           </div>
 
-          {ratingStats && (
-            <div className="absolute bottom-8 right-6 hidden lg:flex items-center gap-2">
-              <div className="flex gap-0.5">
-                {[1,2,3,4,5].map(n => (
-                  <Star key={n} size={13} fill={BRAND} color={BRAND} />
-                ))}
-              </div>
-              <span className="text-sm font-semibold text-white">{ratingStats.avg}</span>
-              <span className="text-xs text-white/50">· {ratingStats.count} reseñas</span>
-            </div>
-          )}
         </div>
       </section>
 

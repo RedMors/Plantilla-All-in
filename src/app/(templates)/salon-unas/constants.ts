@@ -13,6 +13,5 @@ export const MUTED      = '#6B6560'   // texto secundario/muted
 export const NAV_LINKS = [
   { href: '/salon-unas/servicios', label: 'Servicios' },
   { href: '/salon-unas/galeria',   label: 'Galería'   },
-  { href: '/salon-unas/opiniones', label: 'Opiniones' },
   { href: '/salon-unas/contacto',  label: 'Contacto'  },
 ] as const
