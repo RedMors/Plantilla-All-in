@@ -1,7 +1,16 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Cormorant_Garamond } from 'next/font/google'
 import MobileNav from './MobileNav'
 import { NAV_LINKS } from './constants'
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-cormorant',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Nails by Mariela — San Salvador',
@@ -11,8 +20,8 @@ export const metadata: Metadata = {
 export default function SalonUnasLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
-      style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-      className="min-h-screen bg-[#FAF9F6] text-[#1A1A1A] flex flex-col"
+      className={`${cormorant.variable} min-h-screen bg-[#FAF9F6] text-[#1A1A1A] flex flex-col`}
+      style={{ fontFamily: 'var(--font-geist-sans, system-ui), sans-serif' }}
     >
       <header className="sticky top-0 z-50 bg-[#FAF9F6]/97 backdrop-blur-sm border-b border-[#EDE9E3]">
         <div className="relative">
@@ -40,7 +49,8 @@ export default function SalonUnasLayout({ children }: { children: React.ReactNod
               <MobileNav />
               <Link
                 href="/salon-unas/contacto"
-                className="hidden sm:inline-flex items-center gap-2 border border-[#C4965A] text-[#C4965A] text-[11px] font-semibold tracking-[0.12em] uppercase px-5 py-2.5 hover:bg-[#C4965A] hover:text-white transition-all"
+                className="hidden sm:inline-flex items-center gap-2 border border-[#C4965A] text-[#C4965A] text-[11px] font-semibold tracking-[0.12em] uppercase px-5 py-2.5 rounded-full hover:bg-[#C4965A] hover:text-white active:scale-[0.97] transition-all duration-300"
+                style={{ transitionTimingFunction: 'cubic-bezier(0.32,0.72,0,1)' }}
               >
                 Reservar
               </Link>

@@ -50,11 +50,11 @@ export default async function SalonUnasHome() {
             </p>
 
             <h1
-              className="text-white leading-[0.95] font-bold mb-8 tracking-tight"
-              style={{ fontSize: 'clamp(52px, 8vw, 96px)' }}
+              className="text-white leading-[0.92] font-semibold mb-8"
+              style={{ fontSize: 'clamp(52px, 8vw, 96px)', fontFamily: 'var(--font-cormorant), Georgia, serif', letterSpacing: '-0.01em' }}
             >
               Uñas que<br />hablan<br />
-              <span style={{ color: BRAND }}>por ti.</span>
+              <span style={{ color: BRAND, fontStyle: 'italic' }}>por ti.</span>
             </h1>
 
             <p className="text-white/55 text-lg leading-relaxed mb-10 max-w-md">
@@ -64,15 +64,18 @@ export default async function SalonUnasHome() {
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/salon-unas/contacto"
-                className="inline-flex items-center gap-3 text-white text-sm font-semibold tracking-wide px-8 py-4 hover:opacity-90 transition-opacity"
-                style={{ background: BRAND }}
+                className="inline-flex items-center gap-3 text-white text-sm font-semibold tracking-wide px-8 py-4 rounded-full hover:opacity-90 active:scale-[0.97] transition-all duration-300"
+                style={{ background: BRAND, transitionTimingFunction: 'cubic-bezier(0.32,0.72,0,1)' }}
               >
                 Reservar cita
-                <ArrowRight size={15} strokeWidth={1.5} />
+                <span className="w-6 h-6 rounded-full bg-black/15 flex items-center justify-center">
+                  <ArrowRight size={12} strokeWidth={2} />
+                </span>
               </Link>
               <Link
                 href="/salon-unas/servicios"
-                className="inline-flex items-center gap-2 border border-white/25 text-white/80 text-sm font-medium px-8 py-4 hover:border-white/60 hover:text-white transition-all"
+                className="inline-flex items-center gap-2 border border-white/25 text-white/80 text-sm font-medium px-8 py-4 rounded-full hover:border-white/60 hover:text-white active:scale-[0.97] transition-all duration-300"
+                style={{ transitionTimingFunction: 'cubic-bezier(0.32,0.72,0,1)' }}
               >
                 Ver servicios
               </Link>
@@ -105,7 +108,7 @@ export default async function SalonUnasHome() {
                 <p className="text-[10px] font-semibold tracking-[0.3em] uppercase mb-3" style={{ color: BRAND }}>
                   Lo más popular
                 </p>
-                <h2 className="text-3xl font-bold tracking-tight" style={{ color: INK }}>
+                <h2 className="font-semibold" style={{ color: INK, fontSize: 'clamp(28px, 3vw, 40px)', fontFamily: 'var(--font-cormorant), Georgia, serif', letterSpacing: '-0.01em' }}>
                   Servicios destacados
                 </h2>
               </div>
@@ -227,7 +230,7 @@ export default async function SalonUnasHome() {
           <p className="text-[10px] font-semibold tracking-[0.3em] uppercase mb-3" style={{ color: BRAND }}>
             Encuentra tu servicio
           </p>
-          <h2 className="text-2xl font-bold tracking-tight mb-2" style={{ color: INK }}>
+          <h2 className="font-semibold mb-2" style={{ color: INK, fontSize: 'clamp(22px, 2.5vw, 32px)', fontFamily: 'var(--font-cormorant), Georgia, serif', letterSpacing: '-0.01em' }}>
             ¿Qué servicio estás buscando?
           </h2>
         </div>
@@ -271,18 +274,20 @@ export default async function SalonUnasHome() {
             Te esperamos
           </p>
           <h2
-            className="text-white font-bold leading-tight tracking-tight mb-6"
-            style={{ fontSize: 'clamp(28px, 4vw, 46px)' }}
+            className="text-white font-semibold leading-tight mb-6"
+            style={{ fontSize: 'clamp(28px, 4vw, 52px)', fontFamily: 'var(--font-cormorant), Georgia, serif', letterSpacing: '-0.01em' }}
           >
-            Tu próxima cita,<br />a un clic.
+            Tu próxima cita,<br /><em>a un clic.</em>
           </h2>
           <Link
             href="/salon-unas/contacto"
-            className="inline-flex items-center gap-3 text-white text-sm font-semibold px-8 py-4 hover:opacity-85 transition-opacity"
-            style={{ background: BRAND }}
+            className="inline-flex items-center gap-3 text-white text-sm font-semibold px-8 py-4 rounded-full hover:opacity-85 active:scale-[0.97] transition-all duration-300"
+            style={{ background: BRAND, transitionTimingFunction: 'cubic-bezier(0.32,0.72,0,1)' }}
           >
             Reservar ahora
-            <ArrowRight size={15} strokeWidth={1.5} />
+            <span className="w-6 h-6 rounded-full bg-black/15 flex items-center justify-center">
+              <ArrowRight size={12} strokeWidth={2} />
+            </span>
           </Link>
         </div>
       </section>

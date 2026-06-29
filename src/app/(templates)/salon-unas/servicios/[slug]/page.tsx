@@ -85,8 +85,8 @@ export default async function ServiceDetailPage({
               {service.tagline}
             </p>
             <h1
-              className="text-white font-bold leading-tight tracking-tight mb-5"
-              style={{ fontSize: 'clamp(32px, 5vw, 58px)' }}
+              className="text-white font-semibold leading-tight mb-5"
+              style={{ fontSize: 'clamp(32px, 5vw, 58px)', fontFamily: 'var(--font-cormorant), Georgia, serif', letterSpacing: '-0.01em' }}
             >
               {service.name}
             </h1>

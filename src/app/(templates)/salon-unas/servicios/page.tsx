@@ -25,7 +25,7 @@ export default async function ServiciosPage({
           <p className="text-[10px] font-semibold tracking-[0.3em] uppercase mb-3" style={{ color: BRAND }}>
             Nails by Mariela
           </p>
-          <h1 className="text-4xl font-bold tracking-tight mb-2" style={{ color: INK }}>
+          <h1 className="font-semibold mb-2" style={{ color: INK, fontSize: 'clamp(36px, 5vw, 60px)', fontFamily: 'var(--font-cormorant), Georgia, serif', letterSpacing: '-0.01em' }}>
             {query ? `Resultados para "${q}"` : 'Nuestros servicios'}
           </h1>
           <p className="text-[#6B6560]">
@@ -64,8 +64,8 @@ export default async function ServiciosPage({
             </p>
             <Link
               href="/salon-unas/servicios"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-white px-7 py-3.5"
-              style={{ background: BRAND }}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-white px-7 py-3.5 rounded-full active:scale-[0.97] transition-all duration-300"
+              style={{ background: BRAND, transitionTimingFunction: 'cubic-bezier(0.32,0.72,0,1)' }}
             >
               Ver todos los servicios
             </Link>

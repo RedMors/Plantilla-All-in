@@ -15,7 +15,7 @@ export default async function GaleriaPage() {
           <p className="text-[10px] font-semibold tracking-[0.3em] uppercase mb-3" style={{ color: BRAND }}>
             Nuestro trabajo
           </p>
-          <h1 className="text-4xl font-bold tracking-tight" style={{ color: INK }}>
+          <h1 className="font-semibold" style={{ color: INK, fontSize: 'clamp(36px, 5vw, 60px)', fontFamily: 'var(--font-cormorant), Georgia, serif', letterSpacing: '-0.01em' }}>
             Galería
           </h1>
           <p className="mt-2 text-[#6B6560]">
