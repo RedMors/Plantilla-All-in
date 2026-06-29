@@ -32,6 +32,24 @@ No explores el directorio de skills. Invoca directamente según estas reglas:
 ## Al escribir queries complejas de Supabase
 - **`anthropic-skills:sql-queries`** — invócalo para tablas de pagos (`nail_payments`, webhooks Wompi/Blink) o joins complejos entre plantillas.
 
+## Al implementar features de pagos
+- **`security-review`** — antes de mergear cualquier feature que toque Wompi, Blink o manejo de tokens de pago.
+- **`incremental-implementation`** — para flujos complejos de múltiples pasos (Wompi EnlacePago + webhook + estado de reserva).
+
+## Al optimizar
+- **`verify`** / **`run`** — para confirmar que un cambio funciona en el browser real antes de reportar como terminado.
+- **`simplify`** — después de implementaciones grandes, para limpiar código redundante.
+- **`performance-optimization`** — si hay problemas de LCP, bundle size, o queries lentas.
+
+## Al crear formularios de reserva o contacto
+- **`form-cro`** — para mejorar conversión del booking form y contacto.
+
+## Skills que NO se usan en este proyecto
+`seo-redmors-*`, `small-business:*`, `productivity:*`, `email-sequence`, `paid-ads`,
+`social-content`, `docx`, `pdf`, `pptx`, `xlsx`, `anthropic-skills:humanizer`,
+`anthropic-skills:algorithmic-art`, `competitor-alternatives`, `referral-program`,
+`free-tool-strategy`. No los invoques aunque parezcan relevantes superficialmente.
+
 ---
 
 # Stack de este proyecto
