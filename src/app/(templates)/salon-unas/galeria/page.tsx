@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import ServiceImage from '@/components/salon/ServiceImage'
 import { getGallery } from '@/lib/salon/queries'
 import { BRAND, INK, CREAM } from '../constants'
 
@@ -51,12 +51,13 @@ export default async function GaleriaPage() {
                   style={{ marginBottom: '12px' }}
                 >
                   <div className="relative overflow-hidden" style={{ aspectRatio: i % 5 === 0 ? '3/4' : i % 3 === 0 ? '1/1' : '4/5' }}>
-                    <Image
+                    <ServiceImage
                       src={item.image_url}
                       alt={item.alt_text ?? ''}
-                      fill
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      gradientFrom="#1a1208"
+                      gradientTo="#2a1f0e"
                     />
                     <div className="absolute inset-0 bg-[#0B0B0B]/0 group-hover:bg-[#0B0B0B]/30 transition-all duration-300 flex items-end p-4">
                       {item.alt_text && (

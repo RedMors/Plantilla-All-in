@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import ServiceImage from '@/components/salon/ServiceImage'
 import { Suspense } from 'react'
 import { Star, Calendar, Award, ShieldCheck, Scissors, ArrowRight, Images, MessageCircle, Phone } from 'lucide-react'
 import { getServices, getRatingStats } from '@/lib/salon/queries'
@@ -128,12 +129,13 @@ export default async function SalonUnasHome() {
                 >
                   <div className="relative h-36 w-full bg-[#f7f7f7]">
                     {s.image_url ? (
-                      <Image
+                      <ServiceImage
                         src={s.image_url}
                         alt={s.name}
-                        fill
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                         sizes="(max-width: 640px) 100vw, 33vw"
+                        gradientFrom={s.gradient_from}
+                        gradientTo={s.gradient_to}
                       />
                     ) : (
                       <div

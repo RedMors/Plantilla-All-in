@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import ServiceImage from '@/components/salon/ServiceImage'
 import { getGallery } from '@/lib/salon/queries'
 
 export const dynamic = 'force-dynamic'
@@ -23,12 +23,13 @@ export default async function GaleriaPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {gallery.map((item, i) => (
               <div key={item.id ?? i} className="relative rounded-2xl overflow-hidden aspect-square group cursor-pointer">
-                <Image
+                <ServiceImage
                   src={item.image_url}
                   alt={item.alt_text ?? ''}
-                  fill
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  gradientFrom="#fda4af"
+                  gradientTo="#fb7185"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
               </div>

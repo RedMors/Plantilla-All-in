@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import ServiceImage from '@/components/salon/ServiceImage'
 import { Suspense } from 'react'
 import { Scissors, Search } from 'lucide-react'
 import { getServices } from '@/lib/salon/queries'
@@ -67,12 +67,13 @@ export default async function ServiciosPage({
             >
               <div className="relative h-44 w-full overflow-hidden bg-[#f7f7f7]">
                 {service.image_url ? (
-                  <Image
+                  <ServiceImage
                     src={service.image_url}
                     alt={service.name}
-                    fill
                     className="object-cover transition-transform duration-500 hover:scale-105"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    gradientFrom={service.gradient_from ?? '#fda4af'}
+                    gradientTo={service.gradient_to ?? '#fb7185'}
                   />
                 ) : (
                   <div

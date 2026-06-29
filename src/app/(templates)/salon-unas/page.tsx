@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Suspense } from 'react'
 import { ArrowRight, Star } from 'lucide-react'
 import { getServices, getRatingStats } from '@/lib/salon/queries'
+import ServiceImage from '@/components/salon/ServiceImage'
 import SearchBar from './SearchBar'
 import { BRAND, INK, CREAM } from './constants'
 
@@ -140,12 +141,13 @@ export default async function SalonUnasHome() {
                   style={{ background: INK, minHeight: '220px' }}
                 >
                   {featured[0].image_url ? (
-                    <Image
+                    <ServiceImage
                       src={featured[0].image_url}
                       alt={featured[0].name}
-                      fill
                       className="object-cover opacity-50 transition-transform duration-700 group-hover:scale-105"
                       sizes="60vw"
+                      gradientFrom={featured[0].gradient_from}
+                      gradientTo={featured[0].gradient_to}
                     />
                   ) : (
                     <div
@@ -179,12 +181,12 @@ export default async function SalonUnasHome() {
                   style={{ background: '#F5EFE8' }}
                 >
                   {featured[1].image_url && (
-                    <Image
+                    <ServiceImage
                       src={featured[1].image_url}
                       alt={featured[1].name}
-                      fill
                       className="object-cover opacity-25 transition-transform duration-700 group-hover:scale-105"
                       sizes="40vw"
+                      hideFallback
                     />
                   )}
                   <div className="relative">
@@ -203,12 +205,12 @@ export default async function SalonUnasHome() {
                   style={{ background: CREAM }}
                 >
                   {featured[2].image_url && (
-                    <Image
+                    <ServiceImage
                       src={featured[2].image_url}
                       alt={featured[2].name}
-                      fill
                       className="object-cover opacity-15 transition-transform duration-700 group-hover:scale-105"
                       sizes="40vw"
+                      hideFallback
                     />
                   )}
                   <div className="relative">
