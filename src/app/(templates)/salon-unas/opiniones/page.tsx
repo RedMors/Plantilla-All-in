@@ -1,6 +1,6 @@
 import { Star } from 'lucide-react'
 import { getTestimonials } from '@/lib/salon/queries'
-import { BRAND } from '../constants'
+import { BRAND, INK, CREAM } from '../constants'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,44 +11,93 @@ export default async function OpinionesPage() {
     : null
 
   return (
-    <div className="py-12 px-6">
-      <div className="max-w-5xl mx-auto">
-        <div className="mb-10 text-center">
-          <h1 className="text-3xl font-bold text-[#222222] mb-2">Lo que dicen nuestras clientas</h1>
+    <div style={{ background: CREAM }} className="min-h-screen">
+      {/* Header con stat de rating */}
+      <div className="border-b border-[#EDE9E3] bg-white">
+        <div className="max-w-6xl mx-auto px-6 py-16">
+          <p className="text-[10px] font-semibold tracking-[0.3em] uppercase mb-3" style={{ color: BRAND }}>
+            Clientas satisfechas
+          </p>
+          <h1 className="text-4xl font-bold tracking-tight mb-6" style={{ color: INK }}>
+            Opiniones
+          </h1>
+
           {avg && (
-            <div className="flex items-center justify-center gap-2 mt-3">
-              <div className="flex gap-0.5">
-                {[1,2,3,4,5].map(n => {
-                  const filled = n <= Math.round(parseFloat(avg))
-                  return <Star key={n} size={18} fill={filled ? BRAND : 'none'} color={BRAND} />
-                })}
+            <div className="flex items-center gap-5 border-t border-[#EDE9E3] pt-6">
+              <div>
+                <p
+                  className="text-5xl font-bold tracking-tight leading-none"
+                  style={{ color: INK }}
+                >
+                  {avg}
+                </p>
+                <p className="text-[10px] text-[#B0A89E] uppercase tracking-wide mt-1">de 5</p>
               </div>
-              <span className="font-bold text-[#222]">{avg}</span>
-              <span className="text-sm text-[#6a6a6a]">· {testimonials.length} opiniones</span>
+              <div className="w-px h-10 bg-[#EDE9E3]" />
+              <div>
+                <div className="flex gap-1 mb-1">
+                  {[1,2,3,4,5].map(n => {
+                    const filled = n <= Math.round(parseFloat(avg))
+                    return (
+                      <Star
+                        key={n}
+                        size={16}
+                        strokeWidth={1.5}
+                        fill={filled ? BRAND : 'none'}
+                        color={BRAND}
+                      />
+                    )
+                  })}
+                </div>
+                <p className="text-xs text-[#6B6560]">{testimonials.length} reseñas verificadas</p>
+              </div>
             </div>
           )}
         </div>
+      </div>
 
+      {/* Grid de opiniones */}
+      <div className="max-w-6xl mx-auto px-6 py-14">
         {testimonials.length === 0 ? (
-          <div className="text-center py-20 text-[#6a6a6a]">
-            <p className="text-lg font-semibold text-[#222]">Sin opiniones aún</p>
-            <p className="text-sm mt-2">Las reseñas de nuestras clientas aparecerán aquí.</p>
+          <div className="text-center py-24">
+            <p className="text-xl font-bold tracking-tight mb-2" style={{ color: INK }}>
+              Sin opiniones aún
+            </p>
+            <p className="text-sm text-[#6B6560]">
+              Las reseñas de nuestras clientas aparecerán aquí.
+            </p>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[#EDE9E3]">
             {testimonials.map(t => (
               <div
                 key={t.id}
-                className="bg-white rounded-2xl p-6 border border-[#ebebeb]"
-                style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}
+                className="bg-white p-8 flex flex-col gap-5"
               >
-                <div className="flex gap-0.5 mb-3">
+                {/* Estrellas */}
+                <div className="flex gap-1">
                   {Array.from({ length: t.stars }).map((_, s) => (
-                    <Star key={s} size={14} fill={BRAND} color={BRAND} />
+                    <Star key={s} size={13} strokeWidth={1.5} fill={BRAND} color={BRAND} />
                   ))}
                 </div>
-                <p className="text-sm text-[#3f3f3f] leading-relaxed mb-4">&ldquo;{t.text}&rdquo;</p>
-                <p className="text-sm font-semibold text-[#222222]">{t.customer_name}</p>
+
+                {/* Cita */}
+                <p
+                  className="text-[28px] font-bold leading-none"
+                  style={{ color: BRAND, fontFamily: 'Georgia, serif' }}
+                >
+                  &ldquo;
+                </p>
+                <p className="text-sm text-[#3F3A38] leading-relaxed -mt-4 flex-1">
+                  {t.text}
+                </p>
+
+                {/* Autor */}
+                <div className="pt-4 border-t border-[#EDE9E3]">
+                  <p className="text-xs font-semibold tracking-[0.1em] uppercase" style={{ color: INK }}>
+                    {t.customer_name}
+                  </p>
+                </div>
               </div>
             ))}
           </div>

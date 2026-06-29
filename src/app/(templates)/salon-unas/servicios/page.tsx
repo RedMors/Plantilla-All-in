@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Suspense } from 'react'
-import { Scissors, Search } from 'lucide-react'
+import { ArrowRight, Scissors, Search } from 'lucide-react'
 import { getServices } from '@/lib/salon/queries'
 import SearchBar from '../SearchBar'
-import { BRAND } from '../constants'
+import { BRAND, INK, CREAM } from '../constants'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,96 +15,121 @@ export default async function ServiciosPage({
 }) {
   const { q } = await searchParams
   const query = q?.trim().toLowerCase() ?? ''
-
   const services = await getServices(undefined, query || undefined)
 
   return (
-    <div className="py-12 px-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-[#222222] mb-2">
+    <div style={{ background: CREAM }} className="min-h-screen">
+      {/* Header de sección */}
+      <div className="border-b border-[#EDE9E3] bg-white">
+        <div className="max-w-6xl mx-auto px-6 py-16">
+          <p className="text-[10px] font-semibold tracking-[0.3em] uppercase mb-3" style={{ color: BRAND }}>
+            Nails by Mariela
+          </p>
+          <h1 className="text-4xl font-bold tracking-tight mb-2" style={{ color: INK }}>
             {query ? `Resultados para "${q}"` : 'Nuestros servicios'}
           </h1>
-          <p className="text-[#6a6a6a]">
+          <p className="text-[#6B6560]">
             {query
               ? `${services.length} servicio${services.length !== 1 ? 's' : ''} encontrado${services.length !== 1 ? 's' : ''}`
-              : 'Cada servicio incluye atención personalizada y materiales de calidad'}
+              : 'Atención personalizada. Materiales de calidad. Resultados que duran.'}
           </p>
           {query && (
-            <Link href="/salon-unas/servicios" className="inline-block mt-2 text-sm underline" style={{ color: BRAND }}>
-              ← Ver todos
+            <Link
+              href="/salon-unas/servicios"
+              className="inline-flex items-center gap-1.5 mt-3 text-[11px] font-semibold tracking-[0.1em] uppercase"
+              style={{ color: BRAND }}
+            >
+              ← Todos los servicios
             </Link>
           )}
-        </div>
 
-        {/* Search */}
-        <div className="max-w-xl mx-auto mb-10">
-          <Suspense fallback={<div className="h-14 rounded-full bg-[#f7f7f7] animate-pulse" />}>
-            <SearchBar />
-          </Suspense>
+          <div className="mt-8 max-w-md">
+            <Suspense fallback={<div className="h-8 bg-[#EDE9E3] animate-pulse" />}>
+              <SearchBar />
+            </Suspense>
+          </div>
         </div>
+      </div>
 
-        {/* Empty state */}
-        {services.length === 0 && (
-          <div className="text-center py-16">
-            <Search size={48} className="mx-auto mb-4 text-[#ccc]" />
-            <p className="text-lg font-semibold text-[#222222] mb-2">Sin resultados para &ldquo;{q}&rdquo;</p>
-            <p className="text-sm text-[#6a6a6a] mb-6">Prueba con &quot;manicure&quot;, &quot;pedicure&quot; o &quot;nail art&quot;</p>
-            <Link href="/salon-unas/servicios" className="px-6 py-2.5 rounded-full text-sm font-semibold text-white" style={{ background: BRAND }}>
+      {/* Grid */}
+      <div className="max-w-6xl mx-auto px-6 py-14">
+        {services.length === 0 ? (
+          <div className="text-center py-24">
+            <Search size={36} strokeWidth={1} className="mx-auto mb-5 text-[#D4CCC0]" />
+            <p className="text-xl font-bold tracking-tight mb-2" style={{ color: INK }}>
+              Sin resultados para &ldquo;{q}&rdquo;
+            </p>
+            <p className="text-sm text-[#6B6560] mb-8">
+              Prueba con &quot;manicure&quot;, &quot;pedicure&quot; o &quot;nail art&quot;
+            </p>
+            <Link
+              href="/salon-unas/servicios"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-white px-7 py-3.5"
+              style={{ background: BRAND }}
+            >
               Ver todos los servicios
             </Link>
           </div>
-        )}
-
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map(service => (
-            <div
-              key={service.slug}
-              className="bg-white rounded-2xl overflow-hidden flex flex-col border border-[#ebebeb]"
-              style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}
-            >
-              <div className="relative h-44 w-full overflow-hidden bg-[#f7f7f7]">
-                {service.image_url ? (
-                  <Image
-                    src={service.image_url}
-                    alt={service.name}
-                    fill
-                    className="object-cover transition-transform duration-500 hover:scale-105"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                ) : (
-                  <div
-                    className="h-full flex items-center justify-center"
-                    style={{ background: `linear-gradient(135deg, ${service.gradient_from ?? '#fda4af'}, ${service.gradient_to ?? '#fb7185'})` }}
-                  >
-                    <Scissors size={36} className="text-white/70" />
-                  </div>
-                )}
-              </div>
-              <div className="p-5 flex flex-col flex-1 gap-2">
-                <h2 className="font-bold text-[#222222] text-base">{service.name}</h2>
-                <p className="text-sm text-[#6a6a6a] leading-relaxed flex-1 line-clamp-3">
-                  {service.description ?? service.tagline}
-                </p>
-                <div className="flex items-center justify-between pt-3 border-t border-[#ebebeb] mt-1">
-                  <div>
-                    <p className="text-xs text-[#929292]">Desde</p>
-                    <p className="font-bold text-lg" style={{ color: BRAND }}>${service.price}</p>
-                  </div>
-                  <Link
-                    href={`/salon-unas/servicios/${service.slug}`}
-                    className="px-5 py-2 rounded-full text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                    style={{ background: BRAND }}
-                  >
-                    Ver detalles
-                  </Link>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[#EDE9E3]">
+            {services.map(service => (
+              <Link
+                key={service.slug}
+                href={`/salon-unas/servicios/${service.slug}`}
+                className="group bg-white flex flex-col overflow-hidden hover:bg-[#FAF9F6] transition-colors"
+              >
+                {/* Imagen o gradiente */}
+                <div className="relative h-52 overflow-hidden">
+                  {service.image_url ? (
+                    <Image
+                      src={service.image_url}
+                      alt={service.name}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                  ) : (
+                    <div
+                      className="h-full w-full flex items-center justify-center"
+                      style={{
+                        background: `linear-gradient(135deg, ${service.gradient_from ?? '#E8E2D9'}, ${service.gradient_to ?? '#D4CCC0'})`,
+                      }}
+                    >
+                      <Scissors size={28} strokeWidth={1} className="text-white/50" />
+                    </div>
+                  )}
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
+
+                {/* Contenido */}
+                <div className="p-7 flex flex-col flex-1 gap-3">
+                  <div>
+                    <p className="text-[10px] font-semibold tracking-[0.2em] uppercase mb-1.5" style={{ color: BRAND }}>
+                      {service.tagline}
+                    </p>
+                    <h2 className="text-lg font-bold tracking-tight group-hover:text-[#C4965A] transition-colors" style={{ color: INK }}>
+                      {service.name}
+                    </h2>
+                  </div>
+                  <p className="text-sm text-[#6B6560] leading-relaxed flex-1 line-clamp-3">
+                    {service.description ?? service.tagline}
+                  </p>
+                  <div className="flex items-center justify-between pt-4 border-t border-[#EDE9E3]">
+                    <div>
+                      <p className="text-[10px] text-[#B0A89E] uppercase tracking-wide">Desde</p>
+                      <p className="text-xl font-bold tracking-tight" style={{ color: INK }}>${service.price}</p>
+                    </div>
+                    <span
+                      className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase transition-all group-hover:gap-2.5"
+                      style={{ color: BRAND }}
+                    >
+                      Ver <ArrowRight size={12} strokeWidth={1.5} />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

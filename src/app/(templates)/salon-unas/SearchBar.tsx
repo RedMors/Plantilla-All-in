@@ -3,7 +3,6 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { Search, X } from 'lucide-react'
-import { BRAND } from './constants'
 
 export default function SearchBar() {
   const router = useRouter()
@@ -26,34 +25,28 @@ export default function SearchBar() {
   }
 
   return (
-    <form
-      onSubmit={submit}
-      className="flex items-center bg-white border border-[#dddddd] rounded-full shadow-md overflow-hidden max-w-xl mx-auto px-2 py-2 gap-2"
-    >
-      <span className="pl-3 text-[#6a6a6a] shrink-0">
-        <Search size={18} />
-      </span>
+    <form onSubmit={submit} className="flex items-center border-b border-[#D4CCC0] pb-2 gap-3 max-w-xl mx-auto">
+      <Search size={16} className="text-[#6B6560] shrink-0" strokeWidth={1.5} />
       <input
         type="text"
         value={value}
         onChange={e => setValue(e.target.value)}
-        placeholder="¿Qué servicio buscas?"
-        className="flex-1 bg-transparent outline-none text-[#222222] placeholder-[#6a6a6a] text-sm px-2 min-w-0"
+        placeholder="Busca un servicio..."
+        className="flex-1 bg-transparent outline-none text-sm text-[#1A1A1A] placeholder-[#B0A89E] min-w-0"
       />
       {value && (
         <button
           type="button"
           onClick={clear}
-          className="text-[#929292] hover:text-[#222222] shrink-0 transition-colors p-1"
+          className="text-[#B0A89E] hover:text-[#1A1A1A] shrink-0 transition-colors"
           aria-label="Limpiar"
         >
-          <X size={16} />
+          <X size={14} strokeWidth={1.5} />
         </button>
       )}
       <button
         type="submit"
-        className="px-5 py-2 rounded-full text-sm font-semibold text-white shrink-0 transition-opacity hover:opacity-90"
-        style={{ background: BRAND }}
+        className="text-[11px] font-semibold tracking-[0.1em] uppercase text-[#C4965A] hover:text-[#B8864E] shrink-0 transition-colors"
       >
         Buscar
       </button>
