@@ -1,19 +1,10 @@
 import { MapPin, Phone, Clock, Camera } from 'lucide-react'
-import nextDynamic from 'next/dynamic'
 import { getServices } from '@/lib/salon/queries'
 import { BRAND, INK, CREAM } from '../constants'
 import ContactForm from './ContactForm'
+import MapWidget from '../MapWidget'
 
 export const dynamic = 'force-dynamic'
-
-const MapWidget = nextDynamic(() => import('../MapWidget'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full flex items-center justify-center bg-[#F5EFE8]">
-      <div className="w-5 h-5 border-2 border-[#C4965A] border-t-transparent rounded-full animate-spin" />
-    </div>
-  ),
-})
 
 const WA_NUMBER = '+50378901234'
 const WA_URL = `https://wa.me/${WA_NUMBER.replace(/\D/g, '')}`
