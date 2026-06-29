@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "WashOS — Template Gallery",
+  title: "Template Gallery",
   description: "Plantillas web completas para negocios locales — booking, pagos, admin incluido.",
 };
 

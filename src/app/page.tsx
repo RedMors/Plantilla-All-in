@@ -21,7 +21,7 @@ const TEMPLATES = [
     description: 'Estética clara y fresca. Blanco, rosa y tarjetas tipo Pinterest.',
     tags: ['Belleza', 'Claro', 'Rosa'],
     href: '/salon-unas-lite',
-    status: 'soon' as const,
+    status: 'live' as const,
     palette: ['#FFFFFF', '#FF385C', '#F9F0F2', '#1A1A1A'],
     gradient: 'from-[#FFF0F3] to-[#FFE4EA]',
     accentColor: '#FF385C',
@@ -51,12 +51,7 @@ export default function GalleryPage() {
       {/* Header */}
       <header className="border-b border-white/10 px-8 py-5 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 bg-white rounded-sm flex items-center justify-center">
-            <span className="text-[#0D0D0D] text-xs font-black tracking-tight">W</span>
-          </div>
-          <span className="text-sm font-semibold tracking-wide text-white/80">WashOS</span>
-          <span className="text-white/20">/</span>
-          <span className="text-sm text-white/40">Plantillas</span>
+          <span className="text-sm font-semibold tracking-wide text-white/80">Plantillas</span>
         </div>
         <span className="text-[11px] text-white/30 tracking-widest uppercase">
           {TEMPLATES.filter(t => t.status === 'live').length} de {TEMPLATES.length} disponibles
