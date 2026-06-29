@@ -44,6 +44,29 @@ No explores el directorio de skills. Invoca directamente según estas reglas:
 ## Al crear formularios de reserva o contacto
 - **`form-cro`** — para mejorar conversión del booking form y contacto.
 
+## Al crear una plantilla nueva (carwash, gym, vivero, etc.)
+- **`anthropic-skills:theme-factory`** — genera el design system completo de la plantilla: paleta, tipografía, tokens, constantes. Invócalo ANTES de escribir código de una plantilla nueva.
+- **`design:design-system`** — cuando haya 4+ plantillas activas, para formalizar el sistema de `constants.ts` compartido entre templates.
+
+## Al optimizar las páginas públicas de cada plantilla
+- **`page-cro`** — el homepage de cada plantilla es una landing page de conversión. Invócalo cuando el dueño del negocio reporte pocas reservas o al auditar una plantilla antes de entregarla.
+
+## Al construir componentes UI complejos
+- **`frontend-ui-engineering`** — BookingWidget, formulario de pagos Wompi, display de QR Lightning, animaciones de entrada. Diferente a los skills de diseño — es sobre ingeniería del componente.
+
+## Al diseñar APIs y webhooks
+- **`api-and-interface-design`** — al diseñar los endpoints de webhooks (Wompi/Blink) y las Server Actions de pagos antes de implementarlos.
+
+## Al preparar para producción real
+- **`observability-and-instrumentation`** — cuando haya clientes reales. Invócalo para definir qué errores loggear, qué métricas capturar, y cómo monitorear fallos de pago.
+- **`design:accessibility-review`** — los sitios públicos se venden a negocios reales. Invócalo antes de entregar cada plantilla a un cliente.
+
+## Al agregar dependencias nuevas
+- **`anthropic-skills:dependency-auditor`** — antes de instalar cualquier paquete nuevo (framer-motion, librerías de pagos, etc.). Valida bundle size, licencias y vulnerabilidades.
+
+## Al actualizar versiones del stack
+- **`deprecation-and-migration`** — cuando Next.js o Supabase lancen breaking changes. Invócalo para planificar la migración sin romper plantillas en producción.
+
 ## Skills que NO se usan en este proyecto
 `seo-redmors-*`, `small-business:*`, `productivity:*`, `email-sequence`, `paid-ads`,
 `social-content`, `docx`, `pdf`, `pptx`, `xlsx`, `anthropic-skills:humanizer`,
