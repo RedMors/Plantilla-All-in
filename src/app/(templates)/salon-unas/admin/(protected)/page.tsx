@@ -84,8 +84,10 @@ export default async function AdminDashboard() {
       .neq('status', 'cancelled'),
   ])
 
-  const monthRevenue = (monthAppts ?? []).reduce((sum: number, a: { nail_services: { price: number } | null }) => {
-    return sum + (a.nail_services?.price ?? 0)
+  // Supabase infiere nail_services como array en el tipo aunque en runtime es objeto único
+  const monthRevenue = (monthAppts ?? []).reduce((sum, a) => {
+    const svc = a.nail_services as unknown as { price: number } | null
+    return sum + (svc?.price ?? 0)
   }, 0)
 
   const dayMap: Record<string, number> = {}

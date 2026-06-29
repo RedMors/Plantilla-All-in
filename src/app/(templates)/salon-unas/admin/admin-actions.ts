@@ -3,17 +3,26 @@
 import { adminDb } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 
-export async function updateAppointmentStatus(id: string, status: 'confirmed' | 'completed' | 'cancelled') {
+// _formData es requerido como último param para que .bind(null, id, status) deje
+// la firma (formData: FormData) => Promise<void> — patrón Next.js 15+ con bind
+export async function updateAppointmentStatus(
+  id: string,
+  status: 'confirmed' | 'completed' | 'cancelled',
+  _formData: FormData
+): Promise<void> {
   const db = adminDb()
   const { error } = await db
     .from('nail_appointments')
     .update({ status })
     .eq('id', id)
 
-  if (error) return { error: 'No se pudo actualizar el estado.' }
+  if (error) {
+    console.error('[admin] updateAppointmentStatus:', error.message)
+    return
+  }
   revalidatePath('/salon-unas/admin')
   revalidatePath('/salon-unas/admin/citas')
-  return { success: true }
+  revalidatePath('/salon-unas', 'layout')
 }
 
 export async function addManualSale(formData: FormData) {

@@ -1,10 +1,10 @@
 'use server'
 
 import { Resend } from 'resend'
+import { adminDb } from '@/lib/supabase/admin'
 
 export type ContactResult = { success: true } | { error: string }
 
-// Previene XSS al interpolar datos del usuario en HTML de email
 function esc(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -26,8 +26,19 @@ export async function sendContactMessage(
     return { error: 'Nombre, teléfono y mensaje son requeridos.' }
   }
 
-  const dest = process.env.CONTACT_EMAIL ?? process.env.RESEND_FROM_EMAIL
+  // Persiste en DB independientemente de Resend — auditoría siempre disponible
+  const db = adminDb()
+  const { error: dbError } = await db
+    .from('nail_contact_messages')
+    .insert({ name, phone, message, service: service || null })
 
+  if (dbError) {
+    console.error('[contacto] db error:', dbError.message)
+    // No bloquea al usuario — el mensaje se intentará mandar por email igual
+  }
+
+  // Email: no-blocking, no falla si Resend no está configurado
+  const dest = process.env.CONTACT_EMAIL ?? process.env.RESEND_FROM_EMAIL
   if (process.env.RESEND_API_KEY && dest) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY)
@@ -46,7 +57,7 @@ export async function sendContactMessage(
       console.error('[contacto] email error:', err)
     }
   } else if (!dest) {
-    console.warn('[contacto] CONTACT_EMAIL y RESEND_FROM_EMAIL sin configurar — mensaje no enviado por email')
+    console.warn('[contacto] CONTACT_EMAIL y RESEND_FROM_EMAIL sin configurar — solo guardado en DB')
   }
 
   return { success: true }

@@ -8,18 +8,23 @@ import {
   getTestimonials,
 } from '@/lib/salon/queries'
 import BookingWidget from '../../BookingWidget'
+import { BRAND } from '../../constants'
 
 export const dynamic = 'force-dynamic'
-
-const BRAND = '#ff385c'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const service = await getServiceBySlug(slug)
   if (!service) return {}
+  const description = service.description ?? service.tagline ?? `${service.name} en Nails by Mariela, San Salvador. Desde $${service.price}.`
   return {
     title: `${service.name} — Nails by Mariela`,
-    description: service.description,
+    description,
+    openGraph: {
+      title: `${service.name} — Nails by Mariela`,
+      description,
+      ...(service.image_url ? { images: [{ url: service.image_url }] } : {}),
+    },
   }
 }
 

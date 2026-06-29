@@ -23,6 +23,17 @@ export async function bookAppointment(formData: FormData): Promise<BookingResult
 
   const db = adminDb()
 
+  // Rate limiting: máximo 2 citas pending por número de teléfono
+  const { count: pendingByPhone } = await db
+    .from(APPOINTMENTS_TABLE)
+    .select('id', { count: 'exact', head: true })
+    .eq('customer_phone', phone)
+    .eq('status', 'pending')
+
+  if ((pendingByPhone ?? 0) >= 2) {
+    return { error: 'Ya tienes 2 citas pendientes. Espera a que sean confirmadas.' }
+  }
+
   const { count } = await db
     .from(APPOINTMENTS_TABLE)
     .select('id', { count: 'exact', head: true })

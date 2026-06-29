@@ -51,16 +51,27 @@ export type NailTestimonial = {
 
 const SERVICE_COLS = 'id,slug,emoji,name,tagline,description,price,image_url,gradient_from,gradient_to,includes,faqs,related_slugs,active,sort_order'
 
-export async function getServices(limit?: number): Promise<NailService[]> {
+export async function getServices(limit?: number, search?: string): Promise<NailService[]> {
   let q = db()
     .from('nail_services')
     .select(SERVICE_COLS)
     .eq('active', true)
     .order('sort_order')
+  if (search) q = q.or(`name.ilike.%${search}%,tagline.ilike.%${search}%,description.ilike.%${search}%`)
   if (limit) q = q.limit(limit)
   const { data, error } = await q
   if (error) throw new Error(`[nail_services] ${error.message}`)
   return data ?? []
+}
+
+export async function getRatingStats(): Promise<{ avg: number; count: number } | null> {
+  const { data, error } = await db()
+    .from('nail_testimonials')
+    .select('stars')
+    .eq('active', true)
+  if (error || !data?.length) return null
+  const avg = data.reduce((s, t) => s + t.stars, 0) / data.length
+  return { avg: parseFloat(avg.toFixed(1)), count: data.length }
 }
 
 export async function getServiceBySlug(slug: string): Promise<NailService | null> {

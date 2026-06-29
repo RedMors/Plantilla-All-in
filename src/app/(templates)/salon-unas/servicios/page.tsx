@@ -16,12 +16,7 @@ export default async function ServiciosPage({
   const { q } = await searchParams
   const query = q?.trim().toLowerCase() ?? ''
 
-  const allServices = await getServices()
-  const services = query
-    ? allServices.filter(s =>
-        `${s.name} ${s.tagline} ${s.description}`.toLowerCase().includes(query)
-      )
-    : allServices
+  const services = await getServices(undefined, query || undefined)
 
   return (
     <div className="py-12 px-6">

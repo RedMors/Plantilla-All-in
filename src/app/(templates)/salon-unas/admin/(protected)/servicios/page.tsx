@@ -144,7 +144,7 @@ function ServiceForm({
 
     startTransition(async () => {
       const res = await (initial ? updateService(fd) : createService(fd))
-      if ('error' in res) { setError(res.error); return }
+      if ('error' in res) { setError(res.error ?? 'Error desconocido'); return }
       onSave()
     })
   }

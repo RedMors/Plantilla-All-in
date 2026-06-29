@@ -2,14 +2,13 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Suspense } from 'react'
 import { Star, Calendar, Award, ShieldCheck, Scissors, ArrowRight, Images, MessageCircle, Phone } from 'lucide-react'
-import { getServices } from '@/lib/salon/queries'
+import { getServices, getRatingStats } from '@/lib/salon/queries'
 import SearchBar from './SearchBar'
 import { BRAND } from './constants'
 
 export const dynamic = 'force-dynamic'
 
-const STATS = [
-  { Icon: Star,        label: '4.9 / 5',            sub: '280+ reseñas' },
+const STATIC_STATS = [
   { Icon: Calendar,    label: 'Lun – Sáb',          sub: '8:00 am – 7:00 pm' },
   { Icon: Award,       label: '5 años',              sub: 'de experiencia' },
   { Icon: ShieldCheck, label: 'Higiene garantizada', sub: 'Materiales desechables' },
@@ -23,7 +22,10 @@ const SECTION_CARDS = [
 ]
 
 export default async function SalonUnasHome() {
-  const featured = await getServices(3)
+  const [featured, ratingStats] = await Promise.all([
+    getServices(3),
+    getRatingStats(),
+  ])
 
   return (
     <>
@@ -74,7 +76,14 @@ export default async function SalonUnasHome() {
         {/* STATS */}
         <div className="border-b border-[#ebebeb]">
           <div className="max-w-4xl mx-auto px-6 py-5 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-            {STATS.map(({ Icon, label, sub }) => (
+            {ratingStats && (
+              <div className="flex flex-col items-center gap-1">
+                <Star size={20} color={BRAND} strokeWidth={1.8} />
+                <p className="text-sm font-semibold text-[#222222]">{ratingStats.avg} / 5</p>
+                <p className="text-xs text-[#6a6a6a]">{ratingStats.count} reseñas</p>
+              </div>
+            )}
+            {STATIC_STATS.map(({ Icon, label, sub }) => (
               <div key={label} className="flex flex-col items-center gap-1">
                 <Icon size={20} color={BRAND} strokeWidth={1.8} />
                 <p className="text-sm font-semibold text-[#222222]">{label}</p>
