@@ -25,12 +25,19 @@ export async function bookAppointment(formData: FormData): Promise<BookingResult
   const name       = (formData.get('customer_name')  as string)?.trim()
   const phone      = (formData.get('customer_phone') as string)?.trim()
   const email      = (formData.get('customer_email') as string | null)?.trim() || null
-  const payMethod  = (formData.get('payment_method') as string) || 'cash'
-  const message    = formData.get('message') as string | null
+  const payMethodRaw = (formData.get('payment_method') as string) || 'cash'
+  const message      = formData.get('message') as string | null
 
   if (!serviceId || !date || !time || !name || !phone) {
     return { error: 'Completa todos los campos requeridos.' }
   }
+
+  const VALID_METHODS = ['cash', 'card', 'lightning'] as const
+  type PayMethod = typeof VALID_METHODS[number]
+  if (!VALID_METHODS.includes(payMethodRaw as PayMethod)) {
+    return { error: 'Método de pago inválido.' }
+  }
+  const payMethod = payMethodRaw as PayMethod
 
   const db = adminDb()
 
@@ -100,16 +107,21 @@ export async function bookAppointment(formData: FormData): Promise<BookingResult
 
   const refCode = generateRef(date)
 
-  // Persiste el pago con el código de referencia
-  await db.from(PAYMENTS_TABLE).insert({
+  const { error: payError } = await db.from(PAYMENTS_TABLE).insert({
     appointment_id:    appt.id,
     method:            payMethod,
     status:            'pending',
-    amount:            amount || 0,
+    amount:            amount > 0 ? amount : 0.01,
     confirmation_code: refCode,
   })
 
-  // Invalida toda la sub-ruta del template (slots en servicios/[slug] incluidos)
+  if (payError) {
+    console.error('[bookAppointment] nail_payments insert failed:', payError.message)
+    // La cita ya fue creada — no la revertimos, pero refCode no se muestra
+    revalidatePath('/salon-unas', 'layout')
+    return { success: true, refCode: '' }
+  }
+
   revalidatePath('/salon-unas', 'layout')
   return { success: true, refCode }
 }
