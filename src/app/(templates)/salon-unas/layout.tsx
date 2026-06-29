@@ -1,20 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import MobileNav from './MobileNav'
-
-const BRAND = '#ff385c'
+import { BRAND, NAV_LINKS } from './constants'
 
 export const metadata: Metadata = {
   title: 'Nails by Mariela — San Salvador',
   description: 'Salón de uñas profesional en San Salvador. Manicure, pedicure, nail art y más.',
 }
-
-const NAV_LINKS = [
-  { href: '/salon-unas/servicios', label: 'Servicios' },
-  { href: '/salon-unas/galeria',   label: 'Galería' },
-  { href: '/salon-unas/opiniones', label: 'Opiniones' },
-  { href: '/salon-unas/contacto',  label: 'Contacto' },
-]
 
 export default function SalonUnasLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -22,7 +14,9 @@ export default function SalonUnasLayout({ children }: { children: React.ReactNod
       style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
       className="min-h-screen bg-white text-[#222222] flex flex-col"
     >
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#ebebeb] relative">
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#ebebeb]">
+        {/* relative aquí —  NO en el sticky — evita bug de containing block en Safari/Firefox */}
+        <div className="relative">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
           <Link href="/salon-unas" className="flex items-center gap-2.5 shrink-0">
             <span
@@ -56,6 +50,7 @@ export default function SalonUnasLayout({ children }: { children: React.ReactNod
               Reservar cita
             </Link>
           </div>
+        </div>
         </div>
       </header>
 

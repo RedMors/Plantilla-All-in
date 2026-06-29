@@ -4,10 +4,9 @@ import { Suspense } from 'react'
 import { Star, Calendar, Award, ShieldCheck, Scissors, ArrowRight, Images, MessageCircle, Phone } from 'lucide-react'
 import { getServices } from '@/lib/salon/queries'
 import SearchBar from './SearchBar'
+import { BRAND } from './constants'
 
 export const dynamic = 'force-dynamic'
-
-const BRAND = '#ff385c'
 
 const STATS = [
   { Icon: Star,        label: '4.9 / 5',            sub: '280+ reseñas' },
@@ -24,8 +23,7 @@ const SECTION_CARDS = [
 ]
 
 export default async function SalonUnasHome() {
-  const allServices = await getServices()
-  const featured = allServices.slice(0, 3)
+  const featured = await getServices(3)
 
   return (
     <>

@@ -1,9 +1,9 @@
 import { MapPin, Phone, Clock, Camera } from 'lucide-react'
 import { getServices } from '@/lib/salon/queries'
+import { BRAND } from '../constants'
+import ContactForm from './ContactForm'
 
 export const dynamic = 'force-dynamic'
-
-const BRAND = '#ff385c'
 
 const CONTACT_INFO = [
   { Icon: MapPin,  label: 'Dirección',           value: 'Col. Escalón, San Salvador, El Salvador', href: undefined },
@@ -47,32 +47,7 @@ export default async function ContactoPage() {
 
           <div>
             <h2 className="text-lg font-bold text-[#222222] mb-5">Envíanos un mensaje</h2>
-            <form className="flex flex-col gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-[#6a6a6a] uppercase tracking-wide mb-1.5">Nombre completo</label>
-                <input type="text" placeholder="Tu nombre" className="w-full border border-[#dddddd] rounded-xl px-4 py-3 text-sm outline-none focus:border-[#222] transition-colors" />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[#6a6a6a] uppercase tracking-wide mb-1.5">Teléfono</label>
-                <input type="tel" placeholder="+503 0000-0000" className="w-full border border-[#dddddd] rounded-xl px-4 py-3 text-sm outline-none focus:border-[#222] transition-colors" />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[#6a6a6a] uppercase tracking-wide mb-1.5">Servicio de interés</label>
-                <select className="w-full border border-[#dddddd] rounded-xl px-4 py-3 text-sm text-[#6a6a6a] outline-none focus:border-[#222] transition-colors bg-white">
-                  <option value="">Selecciona un servicio...</option>
-                  {services.map(s => (
-                    <option key={s.slug} value={s.slug}>{s.name} — desde ${s.price}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-[#6a6a6a] uppercase tracking-wide mb-1.5">Mensaje</label>
-                <textarea rows={4} placeholder="¿Tienes alguna fecha en mente o pregunta especial?" className="w-full border border-[#dddddd] rounded-xl px-4 py-3 text-sm outline-none focus:border-[#222] transition-colors resize-none" />
-              </div>
-              <button type="submit" className="w-full py-3 rounded-full font-semibold text-sm text-white transition-opacity hover:opacity-90" style={{ background: BRAND }}>
-                Enviar mensaje
-              </button>
-            </form>
+            <ContactForm services={services.map(s => ({ slug: s.slug, name: s.name, price: s.price }))} />
           </div>
         </div>
       </div>

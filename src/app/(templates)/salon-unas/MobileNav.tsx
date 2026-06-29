@@ -4,15 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { usePathname } from 'next/navigation'
-
-const BRAND = '#ff385c'
-
-const LINKS = [
-  { href: '/salon-unas/servicios', label: 'Servicios' },
-  { href: '/salon-unas/galeria',   label: 'Galería' },
-  { href: '/salon-unas/opiniones', label: 'Opiniones' },
-  { href: '/salon-unas/contacto',  label: 'Contacto' },
-]
+import { BRAND, NAV_LINKS } from './constants'
 
 export default function MobileNav() {
   const [open, setOpen] = useState(false)
@@ -31,7 +23,7 @@ export default function MobileNav() {
       {open && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-[#ebebeb] shadow-sm z-50">
           <nav className="flex flex-col py-2">
-            {LINKS.map(l => (
+            {NAV_LINKS.map(l => (
               <Link
                 key={l.href}
                 href={l.href}

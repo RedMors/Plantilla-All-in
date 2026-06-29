@@ -4,10 +4,9 @@ import { Suspense } from 'react'
 import { Scissors, Search } from 'lucide-react'
 import { getServices } from '@/lib/salon/queries'
 import SearchBar from '../SearchBar'
+import { BRAND } from '../constants'
 
 export const dynamic = 'force-dynamic'
-
-const BRAND = '#ff385c'
 
 export default async function ServiciosPage({
   searchParams,

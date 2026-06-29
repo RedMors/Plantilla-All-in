@@ -3,8 +3,7 @@
 import { useState, useTransition } from 'react'
 import { CheckCircle } from 'lucide-react'
 import { bookAppointment } from './actions'
-
-const BRAND = '#ff385c'
+import { BRAND } from './constants'
 
 type Variant = { id: string; name: string; price: number; duration: string }
 

@@ -7,7 +7,9 @@ import type { TemplatePaymentConfig, PaymentResult } from './types'
 // Genera un código alfanumérico de 6 caracteres (sin O,0,I,1 para evitar confusión)
 export function generateConfirmationCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-  return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
+  const bytes = new Uint8Array(6)
+  crypto.getRandomValues(bytes)
+  return Array.from(bytes, b => chars[b % chars.length]).join('')
 }
 
 export async function createCashPayment(params: {
@@ -37,6 +39,7 @@ export async function createCashPayment(params: {
     .single()
 
   if (error) return { error: 'No se pudo registrar el pago. Intenta de nuevo.' }
+  if (!data) return { error: 'El pago se guardó pero no se pudo obtener el ID.' }
 
   // Email no bloquea — si falla, el pago ya quedó registrado
   sendCashConfirmation({

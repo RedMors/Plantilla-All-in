@@ -51,12 +51,14 @@ export type NailTestimonial = {
 
 const SERVICE_COLS = 'id,slug,emoji,name,tagline,description,price,image_url,gradient_from,gradient_to,includes,faqs,related_slugs,active,sort_order'
 
-export async function getServices(): Promise<NailService[]> {
-  const { data, error } = await db()
+export async function getServices(limit?: number): Promise<NailService[]> {
+  let q = db()
     .from('nail_services')
     .select(SERVICE_COLS)
     .eq('active', true)
     .order('sort_order')
+  if (limit) q = q.limit(limit)
+  const { data, error } = await q
   if (error) throw new Error(`[nail_services] ${error.message}`)
   return data ?? []
 }

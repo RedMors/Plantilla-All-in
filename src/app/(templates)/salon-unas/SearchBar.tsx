@@ -3,8 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { Search, X } from 'lucide-react'
-
-const BRAND = '#ff385c'
+import { BRAND } from './constants'
 
 export default function SearchBar() {
   const router = useRouter()

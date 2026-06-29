@@ -2,6 +2,9 @@
 
 import { adminDb } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
+import { config } from './template.config'
+
+const APPOINTMENTS_TABLE = `${config.prefix}_appointments` as const
 
 export type BookingResult = { success: true } | { error: string }
 
@@ -21,7 +24,7 @@ export async function bookAppointment(formData: FormData): Promise<BookingResult
   const db = adminDb()
 
   const { count } = await db
-    .from('nail_appointments')
+    .from(APPOINTMENTS_TABLE)
     .select('id', { count: 'exact', head: true })
     .eq('service_id', serviceId)
     .eq('appointment_date', date)
@@ -32,7 +35,7 @@ export async function bookAppointment(formData: FormData): Promise<BookingResult
     return { error: 'Este horario ya fue reservado. Elige otro.' }
   }
 
-  const { error } = await db.from('nail_appointments').insert({
+  const { error } = await db.from(APPOINTMENTS_TABLE).insert({
     service_id: serviceId,
     variant_id: variantId || null,
     appointment_date: date,
@@ -49,6 +52,7 @@ export async function bookAppointment(formData: FormData): Promise<BookingResult
     return { error: 'No se pudo guardar tu cita. Intenta de nuevo.' }
   }
 
-  revalidatePath('/salon-unas')
+  // Invalida toda la sub-ruta del template (slots en servicios/[slug] incluidos)
+  revalidatePath('/salon-unas', 'layout')
   return { success: true }
 }

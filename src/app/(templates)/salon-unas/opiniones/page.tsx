@@ -1,9 +1,8 @@
 import { Star } from 'lucide-react'
 import { getTestimonials } from '@/lib/salon/queries'
+import { BRAND } from '../constants'
 
 export const dynamic = 'force-dynamic'
-
-const BRAND = '#ff385c'
 
 export default async function OpinionesPage() {
   const testimonials = await getTestimonials()
@@ -19,9 +18,10 @@ export default async function OpinionesPage() {
           {avg && (
             <div className="flex items-center justify-center gap-2 mt-3">
               <div className="flex gap-0.5">
-                {[1,2,3,4,5].map(n => (
-                  <Star key={n} size={18} fill={BRAND} color={BRAND} />
-                ))}
+                {[1,2,3,4,5].map(n => {
+                  const filled = n <= Math.round(parseFloat(avg))
+                  return <Star key={n} size={18} fill={filled ? BRAND : 'none'} color={BRAND} />
+                })}
               </div>
               <span className="font-bold text-[#222]">{avg}</span>
               <span className="text-sm text-[#6a6a6a]">· {testimonials.length} opiniones</span>
