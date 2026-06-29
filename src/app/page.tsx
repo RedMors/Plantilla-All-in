@@ -9,6 +9,7 @@ const TEMPLATES = [
     description: 'Estética oscura y dorada. Diseño premium para salones de alto perfil.',
     tags: ['Belleza', 'Oscuro', 'Dorado'],
     href: '/salon-unas',
+    adminHref: '/salon-unas/admin',
     status: 'live' as const,
     palette: ['#0B0B0B', '#C4965A', '#F0E4CF', '#FAF9F6'],
     gradient: 'from-[#0B0B0B] to-[#1a1208]',
@@ -21,6 +22,7 @@ const TEMPLATES = [
     description: 'Estética clara y fresca. Blanco, rosa y tarjetas tipo Pinterest.',
     tags: ['Belleza', 'Claro', 'Rosa'],
     href: '/salon-unas-lite',
+    adminHref: null,
     status: 'live' as const,
     palette: ['#FFFFFF', '#FF385C', '#F9F0F2', '#1A1A1A'],
     gradient: 'from-[#FFF0F3] to-[#FFE4EA]',
@@ -33,6 +35,7 @@ const TEMPLATES = [
     description: 'Diseño dinámico y urbano. Azul eléctrico para lavados de autos.',
     tags: ['Automotriz', 'Oscuro', 'Azul'],
     href: '/carwash',
+    adminHref: null,
     status: 'soon' as const,
     palette: ['#0A0F1E', '#1E6FFF', '#E8F0FF', '#FFFFFF'],
     gradient: 'from-[#0A0F1E] to-[#0d1a3a]',
@@ -139,17 +142,34 @@ export default function GalleryPage() {
                 </div>
 
                 {t.status === 'live' ? (
-                  <Link
-                    href={t.href}
-                    className="mt-1 flex items-center justify-between text-sm font-semibold px-4 py-2.5 rounded-lg transition-all hover:opacity-90"
-                    style={{
-                      background: t.accentColor,
-                      color: t.id === 'salon-unas-elite' ? '#0B0B0B' : '#fff',
-                    }}
-                  >
-                    Abrir plantilla
-                    <ExternalLink size={13} strokeWidth={2} />
-                  </Link>
+                  <div className="mt-1 flex flex-col gap-2">
+                    <Link
+                      href={t.href}
+                      className="flex items-center justify-between text-sm font-semibold px-4 py-2.5 rounded-lg transition-all hover:opacity-90"
+                      style={{
+                        background: t.accentColor,
+                        color: t.id === 'salon-unas-elite' ? '#0B0B0B' : '#fff',
+                      }}
+                    >
+                      Ver sitio del cliente
+                      <ExternalLink size={13} strokeWidth={2} />
+                    </Link>
+                    {t.adminHref ? (
+                      <Link
+                        href={t.adminHref}
+                        className="flex items-center justify-between text-sm font-semibold px-4 py-2.5 rounded-lg border transition-all hover:bg-white/5"
+                        style={{ borderColor: t.accentColor + '44', color: t.accentColor }}
+                      >
+                        Ver panel del admin
+                        <ArrowRight size={13} strokeWidth={2} />
+                      </Link>
+                    ) : (
+                      <div className="flex items-center justify-between text-sm px-4 py-2.5 rounded-lg border border-white/5 text-white/15 cursor-not-allowed">
+                        Admin próximamente
+                        <ArrowRight size={13} strokeWidth={2} />
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <div className="mt-1 flex items-center justify-between text-sm font-semibold px-4 py-2.5 rounded-lg border border-white/10 text-white/20 cursor-not-allowed">
                     Próximamente

@@ -3,7 +3,12 @@ import { updateAppointmentStatus } from '../admin-actions'
 
 export const dynamic = 'force-dynamic'
 
-const BRAND = '#ff385c'
+const BRAND       = '#C4965A'
+const BRAND_LIGHT = '#F0E4CF'
+const INK         = '#0B0B0B'
+const STONE       = '#EDE9E3'
+const CREAM       = '#FAF9F6'
+const MUTED       = '#6B6560'
 
 const STATUS_LABEL: Record<string, string> = {
   pending: 'Pendiente',
@@ -108,8 +113,8 @@ export default async function AdminDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-[#222222]">Dashboard</h1>
-        <p className="text-sm text-[#6a6a6a] mt-1">
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: INK }}>Dashboard</h1>
+        <p className="text-sm mt-1" style={{ color: MUTED }}>
           {new Date().toLocaleDateString('es-SV', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
         </p>
       </div>
@@ -117,21 +122,21 @@ export default async function AdminDashboard() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Citas hoy', value: todayAppts?.length ?? 0, color: BRAND },
-          { label: 'Pendientes', value: pendingCount ?? 0, color: '#f59e0b' },
-          { label: 'Confirmadas', value: confirmedCount ?? 0, color: '#22c55e' },
-          { label: 'Ingresos mes', value: `$${monthRevenue.toFixed(0)}`, color: '#3b82f6' },
+          { label: 'Citas hoy',    value: todayAppts?.length ?? 0,      color: INK   },
+          { label: 'Pendientes',   value: pendingCount ?? 0,             color: '#92713A' },
+          { label: 'Confirmadas',  value: confirmedCount ?? 0,           color: '#3d7a4e' },
+          { label: 'Ingresos mes', value: `$${monthRevenue.toFixed(0)}`, color: INK   },
         ].map(stat => (
-          <div key={stat.label} className="bg-white rounded-2xl border border-[#dddddd] p-5">
-            <p className="text-xs text-[#929292] font-medium uppercase tracking-wide mb-2">{stat.label}</p>
-            <p className="text-3xl font-bold" style={{ color: stat.color }}>{stat.value}</p>
+          <div key={stat.label} className="bg-white rounded-2xl p-5" style={{ border: `1px solid ${STONE}` }}>
+            <p className="text-xs font-medium uppercase tracking-wide mb-2" style={{ color: MUTED }}>{stat.label}</p>
+            <p className="text-3xl font-bold tracking-tight" style={{ color: stat.color }}>{stat.value}</p>
           </div>
         ))}
       </div>
 
       {/* Weekly chart */}
-      <div className="bg-white rounded-2xl border border-[#dddddd] p-6">
-        <h2 className="text-sm font-semibold text-[#222222] mb-5">Citas esta semana</h2>
+      <div className="bg-white rounded-2xl p-6" style={{ border: `1px solid ${STONE}` }}>
+        <h2 className="text-sm font-semibold mb-5" style={{ color: INK }}>Citas esta semana</h2>
         <div className="flex items-end gap-2 h-24">
           {weekDays.map(day => (
             <div key={day.key} className="flex-1 flex flex-col items-center gap-1">
@@ -140,13 +145,13 @@ export default async function AdminDashboard() {
                   className="w-full rounded-t-lg transition-all"
                   style={{
                     height: day.count > 0 ? `${Math.max((day.count / maxDay) * 80, 8)}px` : '4px',
-                    background: day.isToday ? BRAND : day.count > 0 ? '#ffd1da' : '#f7f7f7',
+                    background: day.isToday ? INK : day.count > 0 ? BRAND_LIGHT : STONE,
                   }}
                 />
               </div>
-              <span className="text-xs text-[#929292]">{day.label}</span>
+              <span className="text-xs" style={{ color: MUTED }}>{day.label}</span>
               {day.count > 0 && (
-                <span className="text-xs font-semibold" style={{ color: day.isToday ? BRAND : '#3f3f3f' }}>
+                <span className="text-xs font-semibold" style={{ color: day.isToday ? INK : BRAND }}>
                   {day.count}
                 </span>
               )}
@@ -156,16 +161,19 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Today appointments */}
-      <div className="bg-white rounded-2xl border border-[#dddddd] p-6">
+      <div className="bg-white rounded-2xl p-6" style={{ border: `1px solid ${STONE}` }}>
         <div className="flex items-center justify-between mb-5">
-          <h2 className="font-bold text-[#222222]">Citas de hoy</h2>
-          <span className="text-xs px-2.5 py-1 rounded-full bg-[#ffd1da] font-semibold" style={{ color: BRAND }}>
+          <h2 className="font-bold" style={{ color: INK }}>Citas de hoy</h2>
+          <span
+            className="text-xs px-2.5 py-1 rounded-full font-semibold"
+            style={{ background: BRAND_LIGHT, color: '#92713A' }}
+          >
             {todayAppts?.length ?? 0} citas
           </span>
         </div>
 
         {!todayAppts?.length ? (
-          <p className="text-sm text-[#929292] text-center py-8">No hay citas para hoy.</p>
+          <p className="text-sm text-center py-8" style={{ color: MUTED }}>No hay citas para hoy.</p>
         ) : (
           <div className="space-y-3">
             {todayAppts.map((appt: {
@@ -184,8 +192,8 @@ export default async function AdminDashboard() {
 
       {/* Upcoming */}
       {(recentAppts?.filter((a: { appointment_date: string }) => a.appointment_date !== today).length ?? 0) > 0 && (
-        <div className="bg-white rounded-2xl border border-[#dddddd] p-6">
-          <h2 className="font-bold text-[#222222] mb-5">Próximas citas</h2>
+        <div className="bg-white rounded-2xl p-6" style={{ border: `1px solid ${STONE}` }}>
+          <h2 className="font-bold mb-5" style={{ color: INK }}>Próximas citas</h2>
           <div className="space-y-3">
             {recentAppts!
               .filter((a: { appointment_date: string }) => a.appointment_date !== today)
@@ -222,17 +230,17 @@ function AppointmentRow({ appt, showDate = false }: { appt: Appt; showDate?: boo
   const statusLabel = STATUS_LABEL[appt.status] ?? appt.status
 
   return (
-    <div className="flex items-start gap-4 p-4 rounded-xl bg-[#f7f7f7]">
+    <div className="flex items-start gap-4 p-4 rounded-xl" style={{ background: CREAM }}>
       <div className="shrink-0 text-center min-w-[48px]">
         {showDate && appt.appointment_date && (
-          <p className="text-xs text-[#929292] leading-tight">{formatDate(appt.appointment_date)}</p>
+          <p className="text-xs leading-tight" style={{ color: MUTED }}>{formatDate(appt.appointment_date)}</p>
         )}
-        <p className="text-sm font-semibold text-[#222222]">{formatTime(appt.appointment_time)}</p>
+        <p className="text-sm font-semibold" style={{ color: INK }}>{formatTime(appt.appointment_time)}</p>
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-[#222222] text-sm">{appt.customer_name}</p>
-        <p className="text-xs text-[#6a6a6a]">{appt.nail_services?.name ?? 'Servicio'} · ${appt.nail_services?.price ?? '—'}</p>
-        <p className="text-xs text-[#929292]">{appt.customer_phone}</p>
+        <p className="font-semibold text-sm" style={{ color: INK }}>{appt.customer_name}</p>
+        <p className="text-xs" style={{ color: MUTED }}>{appt.nail_services?.name ?? 'Servicio'} · ${appt.nail_services?.price ?? '—'}</p>
+        <p className="text-xs" style={{ color: '#9ca3af' }}>{appt.customer_phone}</p>
       </div>
       <div className="shrink-0 flex flex-col items-end gap-2">
         <span
@@ -246,8 +254,8 @@ function AppointmentRow({ appt, showDate = false }: { appt: Appt; showDate?: boo
             <form action={updateAppointmentStatus.bind(null, appt.id, 'confirmed')}>
               <button
                 type="submit"
-                className="text-xs px-2.5 py-1 rounded-full font-semibold text-white transition-opacity hover:opacity-80"
-                style={{ background: '#22c55e' }}
+                className="text-xs px-2.5 py-1 rounded-full font-semibold transition-opacity hover:opacity-80"
+                style={{ background: INK, color: '#fff' }}
               >
                 Confirmar
               </button>
@@ -255,7 +263,8 @@ function AppointmentRow({ appt, showDate = false }: { appt: Appt; showDate?: boo
             <form action={updateAppointmentStatus.bind(null, appt.id, 'cancelled')}>
               <button
                 type="submit"
-                className="text-xs px-2.5 py-1 rounded-full font-semibold text-white bg-[#9ca3af] transition-opacity hover:opacity-80"
+                className="text-xs px-2.5 py-1 rounded-full font-semibold transition-opacity hover:opacity-80"
+                style={{ background: STONE, color: MUTED }}
               >
                 Cancelar
               </button>
@@ -266,8 +275,8 @@ function AppointmentRow({ appt, showDate = false }: { appt: Appt; showDate?: boo
           <form action={updateAppointmentStatus.bind(null, appt.id, 'completed')}>
             <button
               type="submit"
-              className="text-xs px-2.5 py-1 rounded-full font-semibold text-white transition-opacity hover:opacity-80"
-              style={{ background: '#3b82f6' }}
+              className="text-xs px-2.5 py-1 rounded-full font-semibold transition-opacity hover:opacity-80"
+              style={{ background: BRAND, color: '#fff' }}
             >
               Completada
             </button>

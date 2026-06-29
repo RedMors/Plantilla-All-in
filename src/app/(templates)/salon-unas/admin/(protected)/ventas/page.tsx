@@ -3,13 +3,9 @@
 import { useState, useTransition } from 'react'
 import { addManualSale } from '../../admin-actions'
 
-const BRAND = '#ff385c'
-
-const PAYMENT_LABELS: Record<string, string> = {
-  efectivo: 'Efectivo',
-  transferencia: 'Transferencia',
-  tarjeta: 'Tarjeta',
-}
+const INK   = '#0B0B0B'
+const STONE = '#EDE9E3'
+const MUTED = '#6B6560'
 
 export default function VentasPage() {
   const [success, setSuccess] = useState(false)
@@ -33,18 +29,22 @@ export default function VentasPage() {
     })
   }
 
+  const inputCls = 'w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-colors'
+  const inputStyle = { border: `1px solid ${STONE}`, color: INK, background: '#fff' }
+  const labelStyle = { color: MUTED }
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-[#222222]">Ventas manuales</h1>
-        <p className="text-sm text-[#6a6a6a] mt-1">Registra ventas hechas en el salón que no pasan por el sistema.</p>
+        <h1 className="text-2xl font-bold tracking-tight" style={{ color: INK }}>Ventas manuales</h1>
+        <p className="text-sm mt-1" style={{ color: MUTED }}>Registra ventas hechas en el salón que no pasan por el sistema.</p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-[#dddddd] p-6">
-        <h2 className="font-semibold text-[#222222] mb-5">Nueva venta</h2>
+      <div className="bg-white rounded-2xl p-6" style={{ border: `1px solid ${STONE}` }}>
+        <h2 className="font-semibold mb-5" style={{ color: INK }}>Nueva venta</h2>
         <form onSubmit={handleSubmit} className="grid sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="block text-xs font-semibold text-[#929292] uppercase tracking-wide mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={labelStyle}>
               Descripción *
             </label>
             <input
@@ -52,11 +52,12 @@ export default function VentasPage() {
               type="text"
               required
               placeholder="Ej: Manicure francesa, gel rosa"
-              className="w-full border border-[#dddddd] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#222222] transition-colors"
+              className={inputCls}
+              style={inputStyle}
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#929292] uppercase tracking-wide mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={labelStyle}>
               Monto ($) *
             </label>
             <input
@@ -66,17 +67,19 @@ export default function VentasPage() {
               step="0.01"
               required
               placeholder="0.00"
-              className="w-full border border-[#dddddd] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#222222] transition-colors"
+              className={inputCls}
+              style={inputStyle}
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#929292] uppercase tracking-wide mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={labelStyle}>
               Método de pago
             </label>
             <select
               name="payment_method"
               defaultValue="efectivo"
-              className="w-full border border-[#dddddd] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#222222] transition-colors bg-white"
+              className={inputCls}
+              style={{ ...inputStyle }}
             >
               <option value="efectivo">Efectivo</option>
               <option value="transferencia">Transferencia</option>
@@ -84,7 +87,7 @@ export default function VentasPage() {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#929292] uppercase tracking-wide mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={labelStyle}>
               Fecha
             </label>
             <input
@@ -92,29 +95,31 @@ export default function VentasPage() {
               type="date"
               defaultValue={today}
               max={today}
-              className="w-full border border-[#dddddd] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#222222] transition-colors"
+              className={inputCls}
+              style={inputStyle}
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#929292] uppercase tracking-wide mb-1.5">
+            <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={labelStyle}>
               Notas (opcional)
             </label>
             <input
               name="notes"
               type="text"
               placeholder="Notas adicionales..."
-              className="w-full border border-[#dddddd] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#222222] transition-colors"
+              className={inputCls}
+              style={inputStyle}
             />
           </div>
 
           {error && (
             <div className="sm:col-span-2">
-              <p className="text-xs text-red-500 bg-red-50 px-3 py-2 rounded-xl">{error}</p>
+              <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded-xl">{error}</p>
             </div>
           )}
           {success && (
             <div className="sm:col-span-2">
-              <p className="text-xs text-green-600 bg-green-50 px-3 py-2 rounded-xl">Venta guardada correctamente.</p>
+              <p className="text-xs px-3 py-2 rounded-xl" style={{ color: '#3d7a4e', background: '#edf5f0' }}>Venta guardada correctamente.</p>
             </div>
           )}
 
@@ -122,8 +127,8 @@ export default function VentasPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="px-6 py-2.5 rounded-full font-semibold text-white text-sm transition-opacity hover:opacity-90 disabled:opacity-60"
-              style={{ background: BRAND }}
+              className="px-6 py-2.5 rounded-full font-semibold text-white text-sm transition-opacity hover:opacity-85 disabled:opacity-60"
+              style={{ background: INK }}
             >
               {isPending ? 'Guardando...' : 'Guardar venta'}
             </button>
@@ -131,7 +136,7 @@ export default function VentasPage() {
         </form>
       </div>
 
-      <p className="text-xs text-[#929292] text-center">
+      <p className="text-xs text-center" style={{ color: MUTED }}>
         El historial completo de ventas lo podrás ver aquí próximamente.
       </p>
     </div>

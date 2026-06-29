@@ -4,7 +4,9 @@ import { useState, useTransition, useEffect, useRef } from 'react'
 import { Eye, EyeOff, Pencil, Trash2, Plus, ImagePlus, X } from 'lucide-react'
 import { createService, updateService, toggleServiceActive, deleteService } from '../../admin-actions'
 
-const BRAND = '#ff385c'
+const INK   = '#0B0B0B'
+const STONE = '#EDE9E3'
+const CREAM = '#FAF9F6'
 
 type Service = {
   id: string
@@ -149,44 +151,46 @@ function ServiceForm({
     })
   }
 
-  const input = 'w-full border border-[#dddddd] rounded-lg px-3 py-2 text-sm text-[#222] focus:outline-none focus:border-[#222] transition-colors'
-  const lbl = 'block text-xs font-semibold text-[#6a6a6a] uppercase tracking-wide mb-1'
+  const input = `w-full rounded-lg px-3 py-2 text-sm focus:outline-none transition-colors`
+  const inputStyle = { border: `1px solid ${STONE}`, color: INK }
+  const lbl = 'block text-xs font-semibold uppercase tracking-wide mb-1'
+  const lblStyle = { color: '#6B6560' }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-[#dddddd] p-6 space-y-4">
-      <h3 className="font-semibold text-[#222] text-base">
+    <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 space-y-4" style={{ border: `1px solid ${STONE}` }}>
+      <h3 className="font-semibold text-base" style={{ color: INK }}>
         {initial ? 'Editar servicio' : 'Nuevo servicio'}
       </h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className={lbl}>Nombre *</label>
-          <input className={input} value={form.name} onChange={e => set('name', e.target.value)} required placeholder="Manicure clásica" />
+          <label className={lbl} style={lblStyle}>Nombre *</label>
+          <input className={input} style={inputStyle} value={form.name} onChange={e => set('name', e.target.value)} required placeholder="Manicure clásica" />
         </div>
         <div>
-          <label className={lbl}>Precio ($) *</label>
-          <input className={input} type="number" min="0" step="0.01" value={form.price} onChange={e => set('price', e.target.value)} required placeholder="15.00" />
+          <label className={lbl} style={lblStyle}>Precio ($) *</label>
+          <input className={input} style={inputStyle} type="number" min="0" step="0.01" value={form.price} onChange={e => set('price', e.target.value)} required placeholder="15.00" />
         </div>
       </div>
 
       <div>
-        <label className={lbl}>Slug (URL) *</label>
-        <input className={input} value={form.slug} onChange={e => set('slug', e.target.value)} required placeholder="manicure-clasica" />
+        <label className={lbl} style={lblStyle}>Slug (URL) *</label>
+        <input className={input} style={inputStyle} value={form.slug} onChange={e => set('slug', e.target.value)} required placeholder="manicure-clasica" />
       </div>
 
       <div>
-        <label className={lbl}>Tagline</label>
-        <input className={input} value={form.tagline} onChange={e => set('tagline', e.target.value)} placeholder="El clásico que nunca falla" />
+        <label className={lbl} style={lblStyle}>Tagline</label>
+        <input className={input} style={inputStyle} value={form.tagline} onChange={e => set('tagline', e.target.value)} placeholder="El clásico que nunca falla" />
       </div>
 
       <div>
-        <label className={lbl}>Descripción</label>
-        <textarea className={input + ' resize-none'} rows={3} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Descripción completa del servicio..." />
+        <label className={lbl} style={lblStyle}>Descripción</label>
+        <textarea className={input + ' resize-none'} style={inputStyle} rows={3} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Descripción completa del servicio..." />
       </div>
 
       <div>
-        <label className={lbl}>Qué incluye (una por línea)</label>
-        <textarea className={input + ' resize-none'} rows={4} value={form.includes} onChange={e => set('includes', e.target.value)} placeholder={'Esmaltado de color\nLimado y formado\nHidratación de cutícula'} />
+        <label className={lbl} style={lblStyle}>Qué incluye (una por línea)</label>
+        <textarea className={input + ' resize-none'} style={inputStyle} rows={4} value={form.includes} onChange={e => set('includes', e.target.value)} placeholder={'Esmaltado de color\nLimado y formado\nHidratación de cutícula'} />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
@@ -207,11 +211,11 @@ function ServiceForm({
           type="submit"
           disabled={pending}
           className="px-5 py-2 rounded-full text-sm font-semibold text-white transition-opacity disabled:opacity-50"
-          style={{ background: BRAND }}
+          style={{ background: INK }}
         >
           {pending ? 'Guardando...' : initial ? 'Guardar cambios' : 'Crear servicio'}
         </button>
-        <button type="button" onClick={onCancel} className="px-5 py-2 rounded-full text-sm border border-[#dddddd] text-[#6a6a6a] hover:border-[#222] transition-colors">
+        <button type="button" onClick={onCancel} className="px-5 py-2 rounded-full text-sm transition-colors" style={{ border: `1px solid ${STONE}`, color: '#6B6560' }}>
           Cancelar
         </button>
       </div>
@@ -247,9 +251,9 @@ function ServiceRow({
   }
 
   return (
-    <div className={`bg-white rounded-xl border p-4 flex items-center gap-4 transition-opacity ${!service.active ? 'opacity-50 border-[#eeeeee]' : 'border-[#dddddd]'}`}>
+    <div className="bg-white rounded-xl p-4 flex items-center gap-4 transition-opacity" style={{ border: `1px solid ${service.active ? STONE : '#f0ede8'}`, opacity: service.active ? 1 : 0.5 }}>
       {/* Thumbnail */}
-      <div className="w-14 h-14 rounded-lg overflow-hidden bg-[#f7f7f7] shrink-0 flex items-center justify-center">
+      <div className="w-14 h-14 rounded-lg overflow-hidden shrink-0 flex items-center justify-center" style={{ background: CREAM }}>
         {service.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={service.image_url} alt={service.name} className="w-full h-full object-cover" />
@@ -329,8 +333,8 @@ export default function ServiciosPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#222]">Servicios</h1>
-          <p className="text-sm text-[#6a6a6a] mt-0.5">
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: INK }}>Servicios</h1>
+          <p className="text-sm mt-0.5" style={{ color: '#6B6560' }}>
             {services.length} servicio{services.length !== 1 ? 's' : ''} registrado{services.length !== 1 ? 's' : ''}
           </p>
         </div>
@@ -338,7 +342,7 @@ export default function ServiciosPage() {
           <button
             onClick={() => setEditing('new')}
             className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-white"
-            style={{ background: BRAND }}
+            style={{ background: INK }}
           >
             <Plus size={15} />
             Nuevo servicio
