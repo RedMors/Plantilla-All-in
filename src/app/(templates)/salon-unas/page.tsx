@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Suspense } from 'react'
-import { ArrowRight, Scissors, Star } from 'lucide-react'
+import { ArrowRight, Star } from 'lucide-react'
 import { getServices, getRatingStats } from '@/lib/salon/queries'
 import SearchBar from './SearchBar'
 import { BRAND, INK, CREAM } from './constants'
@@ -241,7 +241,7 @@ export default async function SalonUnasHome() {
             Encuentra tu servicio
           </p>
           <h2 className="text-2xl font-bold tracking-tight mb-2" style={{ color: INK }}>
-            ¿Qué te apetece hoy?
+            ¿Qué servicio estás buscando?
           </h2>
         </div>
         <Suspense fallback={<div className="h-8 max-w-xl mx-auto bg-[#EDE9E3] animate-pulse" />}>
@@ -269,7 +269,7 @@ export default async function SalonUnasHome() {
                     className="text-[#D4CCC0] transition-all group-hover:text-[#C4965A] group-hover:translate-x-1"
                   />
                 </div>
-                <Scissors size={20} strokeWidth={1} className="text-[#D4CCC0]" />
+                <div className="w-8 h-[2px]" style={{ background: '#D4CCC0' }} />
                 <p className="text-sm text-[#6B6560] leading-relaxed">{desc}</p>
               </Link>
             ))}

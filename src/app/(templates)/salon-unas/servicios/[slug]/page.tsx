@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowRight, Check } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Check } from 'lucide-react'
 import {
   getServiceBySlug,
   getVariants,
@@ -68,18 +68,14 @@ export default async function ServiceDetailPage({
           }}
         />
         <div className="relative max-w-6xl mx-auto px-6 pt-10 pb-14">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-[11px] tracking-wide text-white/40 mb-10">
-            <Link href="/salon-unas" className="hover:text-white/70 transition-colors">
-              Inicio
-            </Link>
-            <span>/</span>
-            <Link href="/salon-unas/servicios" className="hover:text-white/70 transition-colors">
-              Servicios
-            </Link>
-            <span>/</span>
-            <span className="text-white/70">{service.name}</span>
-          </nav>
+          {/* Back button */}
+          <Link
+            href="/salon-unas/servicios"
+            className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.1em] uppercase text-white/40 hover:text-white/80 transition-colors mb-10"
+          >
+            <ArrowLeft size={13} strokeWidth={1.5} />
+            Servicios
+          </Link>
 
           <div className="max-w-2xl">
             <p
@@ -202,6 +198,7 @@ export default async function ServiceDetailPage({
               serviceId={service.id}
               serviceName={service.name}
               servicePrice={service.price}
+              serviceImageUrl={service.image_url ?? undefined}
               variants={variants}
               takenSlots={takenSlots}
               rating={rating}
@@ -251,6 +248,22 @@ export default async function ServiceDetailPage({
             </div>
           </section>
         )}
+      </div>
+
+      {/* Sticky CTA — solo móvil */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between px-5 py-4 border-t border-[#EDE9E3]" style={{ background: CREAM }}>
+        <div>
+          <p className="text-[10px] text-[#B0A89E] uppercase tracking-wide">{service.name}</p>
+          <p className="text-lg font-bold tracking-tight" style={{ color: INK }}>Desde ${service.price}</p>
+        </div>
+        <a
+          href="#booking-widget"
+          className="inline-flex items-center gap-2 text-white text-sm font-semibold px-6 py-3"
+          style={{ background: BRAND }}
+        >
+          Reservar
+          <ArrowRight size={14} strokeWidth={1.5} />
+        </a>
       </div>
     </div>
   )

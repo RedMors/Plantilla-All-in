@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react'
+import Image from 'next/image'
+import { CheckCircle, ArrowRight, ArrowLeft, Banknote, CreditCard, Zap, Copy, Check } from 'lucide-react'
 import { bookAppointment } from './actions'
 import { BRAND, BRAND_LIGHT, INK, CREAM, STONE } from './constants'
+import PhoneInput from './PhoneInput'
 
 type Variant = { id: string; name: string; price: number; duration: string }
 
@@ -11,6 +13,7 @@ type Props = {
   serviceId: string
   serviceName: string
   servicePrice: number
+  serviceImageUrl?: string
   variants: Variant[]
   takenSlots: Record<string, string[]>
   rating?: number
@@ -34,18 +37,26 @@ function todayStr() {
   return new Date().toISOString().split('T')[0]
 }
 
+function generateRef(date: string): string {
+  const d = date.replace(/-/g, '')
+  const rand = Math.random().toString(36).substring(2, 6).toUpperCase()
+  return `NBM-${d}-${rand}`
+}
+
 const inputClass =
   'w-full border-b border-[#EDE9E3] bg-transparent px-0 py-2.5 text-sm text-[#1A1A1A] placeholder-[#B0A89E] outline-none focus:border-[#C4965A] transition-colors'
 
 const labelClass =
   'block text-[10px] font-semibold tracking-[0.2em] uppercase text-[#B0A89E] mb-1.5'
 
-type Step = 'slot' | 'form' | 'success'
+type Step = 'slot' | 'payment' | 'form' | 'success'
+type PayMethod = 'cash' | 'card' | 'lightning'
 
 export default function BookingWidget({
   serviceId,
   serviceName,
   servicePrice,
+  serviceImageUrl,
   variants,
   takenSlots,
   rating,
@@ -56,9 +67,13 @@ export default function BookingWidget({
   const [variantId, setVariantId] = useState(variants[0]?.id ?? '')
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [step, setStep] = useState<Step>('slot')
+  const [payMethod, setPayMethod] = useState<PayMethod>('cash')
   const [errorMsg, setErrorMsg] = useState('')
+  const [refCode, setRefCode] = useState('')
+  const [copied, setCopied] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   const taken = takenSlots[date] ?? []
@@ -71,9 +86,18 @@ export default function BookingWidget({
     month: 'long',
   })
 
+  function copyRef() {
+    navigator.clipboard.writeText(refCode)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (!phone) { setErrorMsg('El teléfono es requerido'); return }
     setErrorMsg('')
+    const ref = generateRef(date)
+    setRefCode(ref)
     const fd = new FormData()
     fd.set('service_id', serviceId)
     fd.set('variant_id', variantId)
@@ -81,7 +105,10 @@ export default function BookingWidget({
     fd.set('time', time)
     fd.set('customer_name', name)
     fd.set('customer_phone', phone)
+    fd.set('customer_email', email)
     fd.set('message', message)
+    fd.set('payment_method', payMethod)
+    fd.set('reference_code', ref)
     startTransition(async () => {
       const result = await bookAppointment(fd)
       if ('error' in result) {
@@ -97,28 +124,56 @@ export default function BookingWidget({
     border: `1px solid ${STONE}`,
   }
 
+  const PAY_OPTIONS: { id: PayMethod; label: string; sub: string; Icon: React.ElementType; available: boolean }[] = [
+    { id: 'cash', label: 'Efectivo', sub: 'Paga al llegar', Icon: Banknote, available: true },
+    { id: 'card', label: 'Tarjeta', sub: 'Visa / Mastercard', Icon: CreditCard, available: false },
+    { id: 'lightning', label: 'Lightning', sub: 'Bitcoin', Icon: Zap, available: false },
+  ]
+
+  // ── SUCCESS ──────────────────────────────────────────────
   if (step === 'success') {
     return (
-      <div className="sticky top-24 p-8 text-center" style={widgetBase}>
-        <CheckCircle size={36} strokeWidth={1.5} style={{ color: BRAND }} className="mx-auto mb-5" />
+      <div id="booking-widget" className="sticky top-24 p-8" style={widgetBase}>
+        <CheckCircle size={36} strokeWidth={1.5} style={{ color: BRAND }} className="mb-5" />
         <p className="text-[10px] font-semibold tracking-[0.25em] uppercase mb-1" style={{ color: BRAND }}>
           Cita confirmada
         </p>
         <h3 className="text-xl font-bold tracking-tight mb-4" style={{ color: INK }}>
           {serviceName}
         </h3>
-        <div className="border-t border-[#EDE9E3] pt-4 mb-6 space-y-1">
+        <div className="border-t border-[#EDE9E3] pt-4 mb-4 space-y-1">
           <p className="text-sm text-[#6B6560] capitalize">{dateLabel}</p>
-          <p className="text-sm text-[#6B6560]">{selectedSlotLabel} · ${displayPrice}</p>
+          <p className="text-sm text-[#6B6560]">{selectedSlotLabel} · <strong style={{ color: INK }}>${displayPrice}</strong></p>
+          <p className="text-sm text-[#6B6560] capitalize">
+            {PAY_OPTIONS.find(p => p.id === payMethod)?.label}
+          </p>
         </div>
+
+        {/* Número de referencia */}
+        {refCode && (
+          <div className="border border-[#EDE9E3] p-4 mb-5" style={{ background: '#F5EFE8' }}>
+            <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[#B0A89E] mb-1">
+              Código de referencia
+            </p>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-base font-bold tracking-widest" style={{ color: INK }}>{refCode}</span>
+              <button onClick={copyRef} className="shrink-0 transition-colors" style={{ color: BRAND }}>
+                {copied ? <Check size={15} strokeWidth={2} /> : <Copy size={15} strokeWidth={1.5} />}
+              </button>
+            </div>
+          </div>
+        )}
+
         <p className="text-xs text-[#B0A89E] mb-5">Te confirmaremos por WhatsApp pronto.</p>
         <button
           onClick={() => {
             setStep('slot')
             setName('')
             setPhone('')
+            setEmail('')
             setMessage('')
             setErrorMsg('')
+            setRefCode('')
           }}
           className="text-[11px] font-semibold tracking-[0.12em] uppercase transition-colors"
           style={{ color: BRAND }}
@@ -129,11 +184,12 @@ export default function BookingWidget({
     )
   }
 
+  // ── FORM ─────────────────────────────────────────────────
   if (step === 'form') {
     return (
-      <div className="sticky top-24 p-8" style={widgetBase}>
+      <div id="booking-widget" className="sticky top-24 p-8" style={widgetBase}>
         <button
-          onClick={() => setStep('slot')}
+          onClick={() => setStep('payment')}
           className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-[#B0A89E] hover:text-[#6B6560] transition-colors mb-7"
         >
           <ArrowLeft size={13} strokeWidth={1.5} />
@@ -149,6 +205,8 @@ export default function BookingWidget({
         <p className="text-xs text-[#6B6560] capitalize mb-8">
           {dateLabel} · {selectedSlotLabel} ·{' '}
           <strong style={{ color: INK }}>${displayPrice}</strong>
+          {' · '}
+          <span className="capitalize">{PAY_OPTIONS.find(p => p.id === payMethod)?.label}</span>
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-7">
@@ -163,19 +221,27 @@ export default function BookingWidget({
               className={inputClass}
             />
           </div>
+
+          <PhoneInput
+            name="phone"
+            required
+            value={phone}
+            onChange={setPhone}
+          />
+
           <div>
-            <label className={labelClass}>Teléfono / WhatsApp</label>
+            <label className={labelClass}>Correo electrónico <span className="normal-case text-[#D4CCC0]">(opcional)</span></label>
             <input
-              type="tel"
-              required
-              value={phone}
-              onChange={e => setPhone(e.target.value)}
-              placeholder="+503 0000-0000"
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="para recibir comprobante"
               className={inputClass}
             />
           </div>
+
           <div>
-            <label className={labelClass}>Mensaje (opcional)</label>
+            <label className={labelClass}>Mensaje <span className="normal-case text-[#D4CCC0]">(opcional)</span></label>
             <textarea
               rows={2}
               value={message}
@@ -191,135 +257,211 @@ export default function BookingWidget({
 
           <button
             type="submit"
-            disabled={isPending}
-            className="w-full py-4 text-white text-sm font-semibold tracking-wide flex items-center justify-center gap-2 hover:opacity-85 transition-opacity disabled:opacity-50"
+            disabled={isPending || !phone}
+            className="w-full py-4 text-white text-sm font-semibold tracking-wide flex items-center justify-center gap-2 hover:opacity-85 transition-opacity disabled:opacity-40"
             style={{ background: BRAND }}
           >
             {isPending ? 'Reservando...' : 'Confirmar cita'}
             {!isPending && <ArrowRight size={14} strokeWidth={1.5} />}
           </button>
-          <p className="text-[11px] text-[#B0A89E] text-center">No se cobra hasta confirmar</p>
+          <p className="text-[11px] text-[#B0A89E] text-center -mt-4">No se cobra hasta confirmar</p>
         </form>
       </div>
     )
   }
 
-  return (
-    <div className="sticky top-24 p-8" style={widgetBase}>
-      {/* Variante */}
-      {variants.length > 1 && (
-        <div className="mb-6 pb-6 border-b border-[#EDE9E3]">
-          <label className={labelClass}>Opción</label>
-          <select
-            value={variantId}
-            onChange={e => setVariantId(e.target.value)}
-            className="w-full bg-transparent border-b border-[#EDE9E3] py-2.5 text-sm outline-none focus:border-[#C4965A] cursor-pointer transition-colors"
-            style={{ color: INK }}
-          >
-            {variants.map(v => (
-              <option key={v.id} value={v.id}>
-                {v.name} — ${v.price}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+  // ── PAYMENT ──────────────────────────────────────────────
+  if (step === 'payment') {
+    return (
+      <div id="booking-widget" className="sticky top-24 p-8" style={widgetBase}>
+        <button
+          onClick={() => setStep('slot')}
+          className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-[#B0A89E] hover:text-[#6B6560] transition-colors mb-7"
+        >
+          <ArrowLeft size={13} strokeWidth={1.5} />
+          Volver
+        </button>
 
-      {/* Precio */}
-      <div className="mb-6 pb-6 border-b border-[#EDE9E3]">
-        <p className="text-[10px] text-[#B0A89E] uppercase tracking-wide mb-1">Desde</p>
-        <p className="text-4xl font-bold tracking-tight" style={{ color: INK }}>
-          ${displayPrice}
-          <span className="text-sm font-normal text-[#B0A89E] ml-1">/ servicio</span>
+        <p className="text-[10px] font-semibold tracking-[0.25em] uppercase mb-1" style={{ color: BRAND }}>
+          Método de pago
         </p>
-        {rating != null && reviewCount != null && reviewCount > 0 && (
-          <p className="text-xs text-[#6B6560] mt-2">
-            <span style={{ color: BRAND }}>★ {rating.toFixed(1)}</span>
-            {' · '}{reviewCount} reseña{reviewCount !== 1 ? 's' : ''}
-          </p>
-        )}
-      </div>
+        <p className="text-xs text-[#6B6560] capitalize mb-8">
+          {dateLabel} · {selectedSlotLabel} · <strong style={{ color: INK }}>${displayPrice}</strong>
+        </p>
 
-      {/* Fecha */}
-      <div className="mb-4">
-        <label className={labelClass}>Fecha</label>
-        <input
-          type="date"
-          value={date}
-          min={todayStr()}
-          onChange={e => setDate(e.target.value)}
-          className="w-full bg-transparent border-b border-[#EDE9E3] py-2.5 text-sm outline-none focus:border-[#C4965A] cursor-pointer transition-colors"
-          style={{ color: INK }}
-        />
-      </div>
-
-      {/* Hora */}
-      <div className="mb-7">
-        <label className={labelClass}>Hora</label>
-        <div className="grid grid-cols-2 gap-1.5 mt-2">
-          {SLOTS.map(slot => {
-            const isTaken = taken.includes(slot.value)
-            const isSelected = time === slot.value
+        <div className="flex flex-col gap-2 mb-8">
+          {PAY_OPTIONS.map(({ id, label, sub, Icon, available }) => {
+            const selected = payMethod === id
             return (
               <button
-                key={slot.value}
+                key={id}
                 type="button"
-                disabled={isTaken}
-                onClick={() => setTime(slot.value)}
-                className="py-2 text-[11px] font-medium border transition-all"
+                disabled={!available}
+                onClick={() => available && setPayMethod(id)}
+                className={`flex items-center gap-4 p-4 border text-left transition-all ${
+                  !available ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+                }`}
                 style={{
-                  borderColor: isTaken
-                    ? '#EDE9E3'
-                    : isSelected
-                    ? BRAND
-                    : '#EDE9E3',
-                  color: isTaken
-                    ? '#D4CCC0'
-                    : isSelected
-                    ? BRAND
-                    : '#6B6560',
-                  background: isSelected ? BRAND_LIGHT : 'transparent',
-                  textDecoration: isTaken ? 'line-through' : 'none',
-                  cursor: isTaken ? 'not-allowed' : 'pointer',
+                  borderColor: selected && available ? BRAND : '#EDE9E3',
+                  background: selected && available ? BRAND_LIGHT : 'transparent',
                 }}
               >
-                {slot.label}
+                <Icon
+                  size={18}
+                  strokeWidth={1.5}
+                  style={{ color: selected && available ? BRAND : '#B0A89E', flexShrink: 0 }}
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold" style={{ color: INK }}>{label}</p>
+                  <p className="text-xs text-[#6B6560]">
+                    {available ? sub : `${sub} · Próximamente`}
+                  </p>
+                </div>
+                {selected && available && (
+                  <Check size={14} strokeWidth={2} style={{ color: BRAND, flexShrink: 0 }} />
+                )}
               </button>
             )
           })}
         </div>
-      </div>
 
-      {errorMsg && (
-        <p className="text-xs text-red-600 border-l-2 border-red-400 pl-3 mb-4">{errorMsg}</p>
+        <button
+          onClick={() => setStep('form')}
+          className="w-full py-4 text-white text-sm font-semibold tracking-wide flex items-center justify-center gap-2 hover:opacity-85 transition-opacity"
+          style={{ background: BRAND }}
+        >
+          Continuar
+          <ArrowRight size={14} strokeWidth={1.5} />
+        </button>
+      </div>
+    )
+  }
+
+  // ── SLOT (default) ───────────────────────────────────────
+  return (
+    <div id="booking-widget" className="sticky top-24" style={widgetBase}>
+      {/* Imagen del servicio */}
+      {serviceImageUrl && (
+        <div className="relative h-44 overflow-hidden">
+          <Image
+            src={serviceImageUrl}
+            alt={serviceName}
+            fill
+            className="object-cover"
+            sizes="400px"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+        </div>
       )}
 
-      <button
-        onClick={() => {
-          if (taken.includes(time)) {
-            setErrorMsg('Este horario no está disponible. Elige otro.')
-            return
-          }
-          setErrorMsg('')
-          setStep('form')
-        }}
-        className="w-full py-4 text-white text-sm font-semibold tracking-wide flex items-center justify-center gap-2 hover:opacity-85 transition-opacity"
-        style={{ background: BRAND }}
-      >
-        Reservar ahora
-        <ArrowRight size={14} strokeWidth={1.5} />
-      </button>
-      <p className="text-[11px] text-[#B0A89E] text-center mt-2">No se cobra hasta confirmar la cita</p>
+      <div className="p-8">
+        {/* Variante */}
+        {variants.length > 1 && (
+          <div className="mb-6 pb-6 border-b border-[#EDE9E3]">
+            <label className={labelClass}>Opción</label>
+            <select
+              value={variantId}
+              onChange={e => setVariantId(e.target.value)}
+              className="w-full bg-transparent border-b border-[#EDE9E3] py-2.5 text-sm outline-none focus:border-[#C4965A] cursor-pointer transition-colors"
+              style={{ color: INK }}
+            >
+              {variants.map(v => (
+                <option key={v.id} value={v.id}>
+                  {v.name} — ${v.price}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
-      {/* Resumen */}
-      <div className="mt-6 pt-6 border-t border-[#EDE9E3] space-y-2 text-sm">
-        <div className="flex justify-between text-[#6B6560]">
-          <span>{serviceName}</span>
-          <span>${displayPrice}</span>
+        {/* Precio */}
+        <div className="mb-6 pb-6 border-b border-[#EDE9E3]">
+          <p className="text-[10px] text-[#B0A89E] uppercase tracking-wide mb-1">Desde</p>
+          <p className="text-4xl font-bold tracking-tight" style={{ color: INK }}>
+            ${displayPrice}
+            <span className="text-sm font-normal text-[#B0A89E] ml-1">/ servicio</span>
+          </p>
+          {rating != null && reviewCount != null && reviewCount > 0 && (
+            <p className="text-xs text-[#6B6560] mt-2">
+              <span style={{ color: BRAND }}>★ {rating.toFixed(1)}</span>
+              {' · '}{reviewCount} reseña{reviewCount !== 1 ? 's' : ''}
+            </p>
+          )}
         </div>
-        <div className="flex justify-between font-semibold pt-2 border-t border-[#EDE9E3]" style={{ color: INK }}>
-          <span>Total</span>
-          <span>${displayPrice}</span>
+
+        {/* Fecha */}
+        <div className="mb-4">
+          <label className={labelClass}>Fecha</label>
+          <input
+            type="date"
+            value={date}
+            min={todayStr()}
+            onChange={e => setDate(e.target.value)}
+            className="w-full bg-transparent border-b border-[#EDE9E3] py-2.5 text-sm outline-none focus:border-[#C4965A] cursor-pointer transition-colors"
+            style={{ color: INK }}
+          />
+        </div>
+
+        {/* Hora */}
+        <div className="mb-7">
+          <label className={labelClass}>Hora</label>
+          <div className="grid grid-cols-2 gap-1.5 mt-2">
+            {SLOTS.map(slot => {
+              const isTaken = taken.includes(slot.value)
+              const isSelected = time === slot.value
+              return (
+                <button
+                  key={slot.value}
+                  type="button"
+                  disabled={isTaken}
+                  onClick={() => setTime(slot.value)}
+                  className="py-2 text-[11px] font-medium border transition-all"
+                  style={{
+                    borderColor: isTaken ? '#EDE9E3' : isSelected ? BRAND : '#EDE9E3',
+                    color: isTaken ? '#D4CCC0' : isSelected ? BRAND : '#6B6560',
+                    background: isSelected ? BRAND_LIGHT : 'transparent',
+                    textDecoration: isTaken ? 'line-through' : 'none',
+                    cursor: isTaken ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {slot.label}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {errorMsg && (
+          <p className="text-xs text-red-600 border-l-2 border-red-400 pl-3 mb-4">{errorMsg}</p>
+        )}
+
+        <button
+          onClick={() => {
+            if (taken.includes(time)) {
+              setErrorMsg('Este horario no está disponible. Elige otro.')
+              return
+            }
+            setErrorMsg('')
+            setStep('payment')
+          }}
+          className="w-full py-4 text-white text-sm font-semibold tracking-wide flex items-center justify-center gap-2 hover:opacity-85 transition-opacity"
+          style={{ background: BRAND }}
+        >
+          Reservar ahora
+          <ArrowRight size={14} strokeWidth={1.5} />
+        </button>
+        <p className="text-[11px] text-[#B0A89E] text-center mt-2">No se cobra hasta confirmar la cita</p>
+
+        {/* Resumen */}
+        <div className="mt-6 pt-6 border-t border-[#EDE9E3] space-y-2 text-sm">
+          <div className="flex justify-between text-[#6B6560]">
+            <span>{selectedVariant?.name ?? serviceName}</span>
+            <span>${displayPrice}</span>
+          </div>
+          <div className="flex justify-between font-semibold pt-2 border-t border-[#EDE9E3]" style={{ color: INK }}>
+            <span>Total</span>
+            <span>${displayPrice}</span>
+          </div>
         </div>
       </div>
     </div>

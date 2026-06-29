@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Suspense } from 'react'
-import { ArrowRight, Scissors, Search } from 'lucide-react'
+import { ArrowRight, Search } from 'lucide-react'
 import { getServices } from '@/lib/salon/queries'
 import SearchBar from '../SearchBar'
 import { BRAND, INK, CREAM } from '../constants'
@@ -95,7 +95,7 @@ export default async function ServiciosPage({
                         background: `linear-gradient(135deg, ${service.gradient_from ?? '#E8E2D9'}, ${service.gradient_to ?? '#D4CCC0'})`,
                       }}
                     >
-                      <Scissors size={28} strokeWidth={1} className="text-white/50" />
+                      <span className="text-3xl" style={{ color: 'rgba(255,255,255,0.4)' }}>✦</span>
                     </div>
                   )}
                 </div>

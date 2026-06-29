@@ -1,9 +1,10 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useState, useActionState } from 'react'
 import { CheckCircle } from 'lucide-react'
 import { sendContactMessage } from './actions'
 import { BRAND, INK } from '../constants'
+import PhoneInput from '../PhoneInput'
 
 type Props = {
   services: { slug: string; name: string; price: number }[]
@@ -16,6 +17,7 @@ const labelClass =
   'block text-[10px] font-semibold tracking-[0.2em] uppercase text-[#B0A89E] mb-1'
 
 export default function ContactForm({ services }: Props) {
+  const [phone, setPhone] = useState('')
   const [state, action, isPending] = useActionState(sendContactMessage, null)
 
   if (state && 'success' in state) {
@@ -47,16 +49,13 @@ export default function ContactForm({ services }: Props) {
         />
       </div>
 
-      <div>
-        <label className={labelClass}>Teléfono / WhatsApp</label>
-        <input
-          name="telefono"
-          type="tel"
-          required
-          placeholder="+503 0000-0000"
-          className={inputClass}
-        />
-      </div>
+      <PhoneInput
+        name="telefono"
+        required
+        value={phone}
+        onChange={setPhone}
+      />
+      {/* El hidden input _full del PhoneInput manda el número combinado */}
 
       <div>
         <label className={labelClass}>Servicio de interés</label>
@@ -92,12 +91,15 @@ export default function ContactForm({ services }: Props) {
       <div className="pt-2">
         <button
           type="submit"
-          disabled={isPending}
-          className="inline-flex items-center gap-3 text-white text-sm font-semibold px-8 py-4 hover:opacity-85 transition-opacity disabled:opacity-50"
+          disabled={isPending || !phone}
+          className="inline-flex items-center gap-3 text-white text-sm font-semibold px-8 py-4 hover:opacity-85 transition-opacity disabled:opacity-40"
           style={{ background: BRAND }}
         >
           {isPending ? 'Enviando...' : 'Enviar mensaje'}
         </button>
+        {!phone && (
+          <p className="text-[11px] text-[#B0A89E] mt-2">Ingresa un teléfono válido para continuar</p>
+        )}
       </div>
     </form>
   )
