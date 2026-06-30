@@ -16,8 +16,8 @@ export default function ContactForm({ services }: Props) {
     return (
       <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
         <CheckCircle size={40} color={BRAND} />
-        <p className="text-lg font-bold text-[#222]">¡Mensaje recibido!</p>
-        <p className="text-sm text-[#6a6a6a]">Te contactamos pronto por WhatsApp o teléfono.</p>
+        <p className="text-lg font-bold text-[#3A2A2E]">¡Mensaje recibido!</p>
+        <p className="text-sm text-[#8A7176]">Te contactamos pronto por WhatsApp o teléfono.</p>
       </div>
     )
   }
@@ -25,7 +25,7 @@ export default function ContactForm({ services }: Props) {
   return (
     <form action={action} className="flex flex-col gap-4">
       <div>
-        <label className="block text-xs font-semibold text-[#6a6a6a] uppercase tracking-wide mb-1.5">
+        <label className="block text-xs font-semibold text-[#8A7176] uppercase tracking-wide mb-1.5">
           Nombre completo
         </label>
         <input
@@ -33,11 +33,11 @@ export default function ContactForm({ services }: Props) {
           type="text"
           required
           placeholder="Tu nombre"
-          className="w-full border border-[#dddddd] rounded-xl px-4 py-3 text-sm outline-none focus:border-[#222] transition-colors"
+          className="w-full border border-[#EFE0DD] rounded-xl px-4 py-3 text-sm outline-none focus:border-[#B86A82] transition-colors"
         />
       </div>
       <div>
-        <label className="block text-xs font-semibold text-[#6a6a6a] uppercase tracking-wide mb-1.5">
+        <label className="block text-xs font-semibold text-[#8A7176] uppercase tracking-wide mb-1.5">
           Teléfono / WhatsApp
         </label>
         <input
@@ -45,16 +45,16 @@ export default function ContactForm({ services }: Props) {
           type="tel"
           required
           placeholder="+503 0000-0000"
-          className="w-full border border-[#dddddd] rounded-xl px-4 py-3 text-sm outline-none focus:border-[#222] transition-colors"
+          className="w-full border border-[#EFE0DD] rounded-xl px-4 py-3 text-sm outline-none focus:border-[#B86A82] transition-colors"
         />
       </div>
       <div>
-        <label className="block text-xs font-semibold text-[#6a6a6a] uppercase tracking-wide mb-1.5">
+        <label className="block text-xs font-semibold text-[#8A7176] uppercase tracking-wide mb-1.5">
           Servicio de interés
         </label>
         <select
           name="servicio"
-          className="w-full border border-[#dddddd] rounded-xl px-4 py-3 text-sm text-[#6a6a6a] outline-none focus:border-[#222] transition-colors bg-white"
+          className="w-full border border-[#EFE0DD] rounded-xl px-4 py-3 text-sm text-[#8A7176] outline-none focus:border-[#B86A82] transition-colors bg-white"
         >
           <option value="">Selecciona un servicio...</option>
           {services.map(s => (
@@ -63,7 +63,7 @@ export default function ContactForm({ services }: Props) {
         </select>
       </div>
       <div>
-        <label className="block text-xs font-semibold text-[#6a6a6a] uppercase tracking-wide mb-1.5">
+        <label className="block text-xs font-semibold text-[#8A7176] uppercase tracking-wide mb-1.5">
           Mensaje
         </label>
         <textarea
@@ -71,7 +71,7 @@ export default function ContactForm({ services }: Props) {
           rows={4}
           required
           placeholder="¿Tienes alguna fecha en mente o pregunta especial?"
-          className="w-full border border-[#dddddd] rounded-xl px-4 py-3 text-sm outline-none focus:border-[#222] transition-colors resize-none"
+          className="w-full border border-[#EFE0DD] rounded-xl px-4 py-3 text-sm outline-none focus:border-[#B86A82] transition-colors resize-none"
         />
       </div>
 
