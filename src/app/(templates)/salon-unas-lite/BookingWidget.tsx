@@ -122,7 +122,7 @@ export default function BookingWidget({ serviceId, serviceName, servicePrice, va
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="Tu nombre completo"
-              className="w-full border border-[#EFE0DD] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#3A2A2E] transition-colors"
+              className="w-full border border-[#EFE0DD] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#B86A82] transition-colors"
             />
           </div>
           <div>
@@ -135,7 +135,7 @@ export default function BookingWidget({ serviceId, serviceName, servicePrice, va
               value={phone}
               onChange={e => setPhone(e.target.value)}
               placeholder="+503 0000-0000"
-              className="w-full border border-[#EFE0DD] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#3A2A2E] transition-colors"
+              className="w-full border border-[#EFE0DD] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#B86A82] transition-colors"
             />
           </div>
           <div>
@@ -147,7 +147,7 @@ export default function BookingWidget({ serviceId, serviceName, servicePrice, va
               value={message}
               onChange={e => setMessage(e.target.value)}
               placeholder="¿Algún detalle especial o color preferido?"
-              className="w-full border border-[#EFE0DD] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#3A2A2E] transition-colors resize-none"
+              className="w-full border border-[#EFE0DD] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#B86A82] transition-colors resize-none"
             />
           </div>
 
@@ -170,14 +170,14 @@ export default function BookingWidget({ serviceId, serviceName, servicePrice, va
   }
 
   return (
-    <div className="sticky top-24 rounded-3xl border border-[#EFE0DD] p-6 shadow-sm bg-white">
+    <div className="sticky top-24 rounded-3xl border border-[#EFE0DD] p-6 bg-white" style={{ boxShadow: SHADOW.soft }}>
       {variants.length > 1 && (
         <div className="mb-4">
           <p className="text-xs font-semibold text-[#B6A4A7] uppercase tracking-wide mb-2">Opción</p>
           <select
             value={variantId}
             onChange={e => setVariantId(e.target.value)}
-            className="w-full border border-[#EFE0DD] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#3A2A2E]"
+            className="w-full border border-[#EFE0DD] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#B86A82]"
           >
             {variants.map(v => (
               <option key={v.id} value={v.id}>{v.name} — ${v.price}</option>
