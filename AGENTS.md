@@ -80,7 +80,10 @@ No explores el directorio de skills. Invoca directamente según estas reglas:
 - **Working dir:** `/Users/alexismartinez/multi modal/Plantilla-All-in/`
 - **Stack:** Next.js 16.2.9 App Router · Supabase (`bulbmkuvemxwwizfefzi`) · Tailwind CSS · Vercel
 - **Fuentes:** Geist (body, via `--font-geist-sans`) · Cormorant Garamond (display/headings, via `--font-cormorant`)
-- **Paleta Studio Élite:** BRAND `#C4965A` · INK `#0B0B0B` · STONE `#EDE9E3` · CREAM `#FAF9F6`
-- **Paleta Pinterest Lite:** BRAND `#ff385c` · fondo blanco · bordes `#ebebeb`
+- **Identidades del salón de uñas** (única fuente de verdad: el `DESIGN.md` dentro de cada carpeta de template):
+  - **`salon-unas` (full)** — oro/editorial. BRAND `#C4965A` · INK `#0B0B0B` · STONE `#EDE9E3` · CREAM `#FAF9F6`. Serif Cormorant, superficies planas. ✅ Implementada.
+  - **`salon-unas-lite` (lite)** — rosa/suave. BRAND `#B86A82` · ROSE_DEEP `#934F66` · BLUSH `#FBF4F1` · PLUM `#3A2A2E`. Sans Plus Jakarta, sombras rosadas. ⏳ Tokens listos en `constants.ts`; falta migrar componentes (Migration map en su DESIGN.md).
+- **Naming:** usar nombres descriptivos (`lite` / `full`), NO marcas poéticas tipo "Studio Élite" / "Blush Studio".
+- **Estado del proyecto y roadmap de plantillas:** ver `ESTADO.md` en la raíz.
 - **NUNCA tocar:** `~/Trip-App/` ni `~/akatrek-app/` (producción Akatrek)
 - **NUNCA en client components:** `SUPABASE_SERVICE_ROLE_KEY`

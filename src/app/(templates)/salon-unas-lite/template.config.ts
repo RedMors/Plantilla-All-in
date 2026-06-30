@@ -6,5 +6,5 @@ export const config: TemplatePaymentConfig = {
   fromEmail:   process.env.RESEND_FROM_EMAIL ?? 'Nails by Mariela <noreply@resend.dev>',
   currency:    'USD',
   methods:     ['cash'],   // agregar 'card' y 'lightning' cuando estén las keys
-  brand:       '#ff385c',
+  brand:       '#B86A82',   // rosa polvo — acento de la variante lite (coincide con constants.ts)
 }
