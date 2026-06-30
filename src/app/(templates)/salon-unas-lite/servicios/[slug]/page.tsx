@@ -61,12 +61,12 @@ export default async function ServiceDetailPage({
         />
         <div className="relative max-w-6xl mx-auto px-6 pt-14 pb-12">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-[#6a6a6a] mb-6">
+          <nav className="flex items-center gap-2 text-sm text-[#8A7176] mb-6">
             <Link href="/salon-unas-lite" className="hover:underline">Inicio</Link>
             <span>/</span>
             <Link href="/salon-unas-lite/servicios" className="hover:underline">Servicios</Link>
             <span>/</span>
-            <span className="text-[#222222] font-medium">{service.name}</span>
+            <span className="text-[#3A2A2E] font-medium">{service.name}</span>
           </nav>
 
           <div className="flex items-start gap-6">
@@ -76,8 +76,8 @@ export default async function ServiceDetailPage({
             />
             <div>
               <p className="text-sm font-medium mb-1" style={{ color: BRAND }}>{service.tagline}</p>
-              <h1 className="text-4xl font-bold text-[#222222] mb-3 leading-tight">{service.name}</h1>
-              <p className="text-lg text-[#3f3f3f] max-w-2xl leading-relaxed">{service.description}</p>
+              <h1 className="text-4xl font-bold text-[#3A2A2E] mb-3 leading-tight">{service.name}</h1>
+              <p className="text-lg text-[#8A7176] max-w-2xl leading-relaxed">{service.description}</p>
             </div>
           </div>
         </div>
@@ -89,28 +89,28 @@ export default async function ServiceDetailPage({
           <div className="lg:col-span-2 space-y-12">
 
             <section>
-              <h2 className="text-xl font-bold text-[#222222] mb-6">Elige tu opción</h2>
+              <h2 className="text-xl font-bold text-[#3A2A2E] mb-6">Elige tu opción</h2>
               <div className="space-y-3">
                 {variants.map((variant, i) => (
                   <label
                     key={variant.id}
-                    className="flex items-start gap-4 p-5 rounded-2xl border border-[#dddddd] cursor-pointer hover:border-[#ff385c] transition-colors"
+                    className="flex items-start gap-4 p-5 rounded-2xl border border-[#EFE0DD] cursor-pointer hover:border-[#B86A82] transition-colors"
                   >
                     <input
                       type="radio"
                       name="variant"
                       defaultChecked={i === 0}
-                      className="mt-1 accent-[#ff385c] w-4 h-4 shrink-0"
+                      className="mt-1 accent-[#B86A82] w-4 h-4 shrink-0"
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-3 flex-wrap">
-                        <span className="font-semibold text-[#222222]">{variant.name}</span>
+                        <span className="font-semibold text-[#3A2A2E]">{variant.name}</span>
                         <span className="font-bold text-lg" style={{ color: BRAND }}>${variant.price}</span>
                       </div>
-                      <p className="text-sm text-[#6a6a6a] mt-1">
+                      <p className="text-sm text-[#8A7176] mt-1">
                         {variant.description}
                         {variant.duration !== '-' && (
-                          <span className="ml-2 inline-flex items-center gap-1 text-xs text-[#929292]">
+                          <span className="ml-2 inline-flex items-center gap-1 text-xs text-[#B6A4A7]">
                             {variant.duration}
                           </span>
                         )}
@@ -122,10 +122,10 @@ export default async function ServiceDetailPage({
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-[#222222] mb-5">¿Qué incluye?</h2>
+              <h2 className="text-xl font-bold text-[#3A2A2E] mb-5">¿Qué incluye?</h2>
               <ul className="space-y-3">
                 {service.includes.map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-[#3f3f3f]">
+                  <li key={i} className="flex items-center gap-3 text-[#8A7176]">
                     <span
                       className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs shrink-0"
                       style={{ background: BRAND }}
@@ -139,12 +139,12 @@ export default async function ServiceDetailPage({
             </section>
 
             <section>
-              <h2 className="text-xl font-bold text-[#222222] mb-6">Preguntas frecuentes</h2>
+              <h2 className="text-xl font-bold text-[#3A2A2E] mb-6">Preguntas frecuentes</h2>
               <div className="space-y-4">
                 {service.faqs.map((faq, i) => (
-                  <div key={i} className="p-5 rounded-2xl bg-[#f7f7f7]">
-                    <p className="font-semibold text-[#222222] mb-2">{faq.q}</p>
-                    <p className="text-sm text-[#3f3f3f] leading-relaxed">{faq.a}</p>
+                  <div key={i} className="p-5 rounded-2xl bg-[#F7E8E6]">
+                    <p className="font-semibold text-[#3A2A2E] mb-2">{faq.q}</p>
+                    <p className="text-sm text-[#8A7176] leading-relaxed">{faq.a}</p>
                   </div>
                 ))}
               </div>
@@ -165,27 +165,27 @@ export default async function ServiceDetailPage({
         </div>
 
         {related.length > 0 && (
-          <section className="mt-16 pt-12 border-t border-[#dddddd]">
-            <h2 className="text-xl font-bold text-[#222222] mb-6">También te puede interesar</h2>
+          <section className="mt-16 pt-12 border-t border-[#EFE0DD]">
+            <h2 className="text-xl font-bold text-[#3A2A2E] mb-6">También te puede interesar</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {related.map(rel => (
                 <Link
                   key={rel.slug}
                   href={`/salon-unas-lite/servicios/${rel.slug}`}
-                  className="group flex flex-col rounded-2xl border border-[#dddddd] overflow-hidden hover:shadow-md transition-shadow"
+                  className="group flex flex-col rounded-2xl border border-[#EFE0DD] overflow-hidden transition-transform hover:-translate-y-0.5"
                 >
                   <div
                     className="h-28"
                     style={{ background: `linear-gradient(135deg, ${rel.gradient_from}, ${rel.gradient_to})` }}
                   />
                   <div className="p-4 flex-1 flex flex-col">
-                    <p className="font-semibold text-[#222222] mb-1 group-hover:underline">{rel.name}</p>
-                    <p className="text-sm text-[#6a6a6a] flex-1 mb-3 line-clamp-2">{rel.tagline}</p>
+                    <p className="font-semibold text-[#3A2A2E] mb-1 group-hover:underline">{rel.name}</p>
+                    <p className="text-sm text-[#8A7176] flex-1 mb-3 line-clamp-2">{rel.tagline}</p>
                     <div className="flex items-center justify-between">
                       <span className="font-bold" style={{ color: BRAND }}>Desde ${rel.price}</span>
                       <span
                         className="text-xs px-3 py-1 rounded-full font-medium"
-                        style={{ background: '#ffd1da', color: BRAND }}
+                        style={{ background: '#F7E8E6', color: BRAND }}
                       >
                         Ver más →
                       </span>

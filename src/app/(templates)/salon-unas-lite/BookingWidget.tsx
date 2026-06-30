@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { CheckCircle } from 'lucide-react'
 import { bookAppointment } from './actions'
-import { BRAND } from './constants'
+import { BRAND, SHADOW } from './constants'
 
 type Variant = { id: string; name: string; price: number; duration: string }
 
@@ -78,13 +78,13 @@ export default function BookingWidget({ serviceId, serviceName, servicePrice, va
 
   if (step === 'success') {
     return (
-      <div className="sticky top-24 rounded-3xl border border-[#dddddd] p-6 shadow-sm bg-white text-center">
+      <div className="sticky top-24 rounded-3xl border border-[#EFE0DD] p-6 bg-white text-center" style={{ boxShadow: SHADOW.soft }}>
         <CheckCircle size={48} color={BRAND} className="mx-auto mb-3" />
-        <h3 className="font-bold text-[#222222] text-lg mb-2">¡Cita reservada!</h3>
-        <p className="text-sm font-semibold text-[#222222] mb-1">{serviceName}</p>
-        <p className="text-sm text-[#6a6a6a] mb-1">{dateLabel}</p>
-        <p className="text-sm text-[#6a6a6a] mb-4">{selectedSlotLabel} · ${displayPrice}</p>
-        <p className="text-xs text-[#929292] mb-4">Te confirmaremos por WhatsApp pronto.</p>
+        <h3 className="font-bold text-[#3A2A2E] text-lg mb-2">¡Cita reservada!</h3>
+        <p className="text-sm font-semibold text-[#3A2A2E] mb-1">{serviceName}</p>
+        <p className="text-sm text-[#8A7176] mb-1">{dateLabel}</p>
+        <p className="text-sm text-[#8A7176] mb-4">{selectedSlotLabel} · ${displayPrice}</p>
+        <p className="text-xs text-[#B6A4A7] mb-4">Te confirmaremos por WhatsApp pronto.</p>
         <button
           onClick={() => { setStep('slot'); setName(''); setPhone(''); setMessage(''); setErrorMsg('') }}
           className="text-xs underline"
@@ -98,22 +98,22 @@ export default function BookingWidget({ serviceId, serviceName, servicePrice, va
 
   if (step === 'form') {
     return (
-      <div className="sticky top-24 rounded-3xl border border-[#dddddd] p-6 shadow-sm bg-white">
+      <div className="sticky top-24 rounded-3xl border border-[#EFE0DD] p-6 bg-white" style={{ boxShadow: SHADOW.soft }}>
         <button
           onClick={() => setStep('slot')}
-          className="text-sm mb-4 flex items-center gap-1 text-[#6a6a6a] hover:text-[#222222] transition-colors"
+          className="text-sm mb-4 flex items-center gap-1 text-[#8A7176] hover:text-[#3A2A2E] transition-colors"
         >
           ← Volver
         </button>
 
-        <h3 className="font-bold text-[#222222] mb-1">{serviceName}</h3>
-        <p className="text-sm text-[#6a6a6a] mb-4">
+        <h3 className="font-bold text-[#3A2A2E] mb-1">{serviceName}</h3>
+        <p className="text-sm text-[#8A7176] mb-4">
           {dateLabel} · {selectedSlotLabel} · <strong>${displayPrice}</strong>
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <div>
-            <label className="block text-xs font-semibold text-[#929292] uppercase tracking-wide mb-1.5">
+            <label className="block text-xs font-semibold text-[#B6A4A7] uppercase tracking-wide mb-1.5">
               Nombre
             </label>
             <input
@@ -122,11 +122,11 @@ export default function BookingWidget({ serviceId, serviceName, servicePrice, va
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="Tu nombre completo"
-              className="w-full border border-[#dddddd] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#222222] transition-colors"
+              className="w-full border border-[#EFE0DD] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#3A2A2E] transition-colors"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#929292] uppercase tracking-wide mb-1.5">
+            <label className="block text-xs font-semibold text-[#B6A4A7] uppercase tracking-wide mb-1.5">
               Teléfono / WhatsApp
             </label>
             <input
@@ -135,11 +135,11 @@ export default function BookingWidget({ serviceId, serviceName, servicePrice, va
               value={phone}
               onChange={e => setPhone(e.target.value)}
               placeholder="+503 0000-0000"
-              className="w-full border border-[#dddddd] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#222222] transition-colors"
+              className="w-full border border-[#EFE0DD] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#3A2A2E] transition-colors"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[#929292] uppercase tracking-wide mb-1.5">
+            <label className="block text-xs font-semibold text-[#B6A4A7] uppercase tracking-wide mb-1.5">
               Mensaje (opcional)
             </label>
             <textarea
@@ -147,7 +147,7 @@ export default function BookingWidget({ serviceId, serviceName, servicePrice, va
               value={message}
               onChange={e => setMessage(e.target.value)}
               placeholder="¿Algún detalle especial o color preferido?"
-              className="w-full border border-[#dddddd] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#222222] transition-colors resize-none"
+              className="w-full border border-[#EFE0DD] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-[#3A2A2E] transition-colors resize-none"
             />
           </div>
 
@@ -163,21 +163,21 @@ export default function BookingWidget({ serviceId, serviceName, servicePrice, va
           >
             {isPending ? 'Reservando...' : 'Confirmar cita'}
           </button>
-          <p className="text-xs text-[#929292] text-center">No se cobra hasta confirmar</p>
+          <p className="text-xs text-[#B6A4A7] text-center">No se cobra hasta confirmar</p>
         </form>
       </div>
     )
   }
 
   return (
-    <div className="sticky top-24 rounded-3xl border border-[#dddddd] p-6 shadow-sm bg-white">
+    <div className="sticky top-24 rounded-3xl border border-[#EFE0DD] p-6 shadow-sm bg-white">
       {variants.length > 1 && (
         <div className="mb-4">
-          <p className="text-xs font-semibold text-[#929292] uppercase tracking-wide mb-2">Opción</p>
+          <p className="text-xs font-semibold text-[#B6A4A7] uppercase tracking-wide mb-2">Opción</p>
           <select
             value={variantId}
             onChange={e => setVariantId(e.target.value)}
-            className="w-full border border-[#dddddd] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#222222]"
+            className="w-full border border-[#EFE0DD] rounded-xl px-3 py-2 text-sm outline-none focus:border-[#3A2A2E]"
           >
             {variants.map(v => (
               <option key={v.id} value={v.id}>{v.name} — ${v.price}</option>
@@ -186,32 +186,32 @@ export default function BookingWidget({ serviceId, serviceName, servicePrice, va
         </div>
       )}
 
-      <p className="text-sm text-[#6a6a6a] mb-1">Desde</p>
-      <p className="text-4xl font-bold text-[#222222] mb-1">
+      <p className="text-sm text-[#8A7176] mb-1">Desde</p>
+      <p className="text-4xl font-bold text-[#3A2A2E] mb-1">
         ${displayPrice}
-        <span className="text-base font-normal text-[#6a6a6a]"> / servicio</span>
+        <span className="text-base font-normal text-[#8A7176]"> / servicio</span>
       </p>
       {rating != null && reviewCount != null && reviewCount > 0 && (
-        <div className="flex items-center gap-1 text-sm text-[#6a6a6a] mb-5">
+        <div className="flex items-center gap-1 text-sm text-[#8A7176] mb-5">
           <span style={{ color: BRAND }}>★ {rating.toFixed(1)}</span>
           <span>· {reviewCount} reseña{reviewCount !== 1 ? 's' : ''}</span>
         </div>
       )}
 
       <div className="space-y-2 mb-5">
-        <div className="rounded-2xl border border-[#dddddd] p-3">
-          <p className="text-xs font-semibold text-[#929292] uppercase tracking-widest mb-2">Fecha</p>
+        <div className="rounded-2xl border border-[#EFE0DD] p-3">
+          <p className="text-xs font-semibold text-[#B6A4A7] uppercase tracking-widest mb-2">Fecha</p>
           <input
             type="date"
             value={date}
             min={todayStr()}
             onChange={e => setDate(e.target.value)}
-            className="w-full bg-[#f7f7f7] rounded-xl px-3 py-1.5 text-sm text-[#222222] outline-none border-0 cursor-pointer"
+            className="w-full bg-[#F7E8E6] rounded-xl px-3 py-1.5 text-sm text-[#3A2A2E] outline-none border-0 cursor-pointer"
           />
         </div>
 
-        <div className="rounded-2xl border border-[#dddddd] p-3">
-          <p className="text-xs font-semibold text-[#929292] uppercase tracking-widest mb-2">Hora</p>
+        <div className="rounded-2xl border border-[#EFE0DD] p-3">
+          <p className="text-xs font-semibold text-[#B6A4A7] uppercase tracking-widest mb-2">Hora</p>
           <div className="grid grid-cols-2 gap-1.5">
             {SLOTS.map(slot => {
               const isTaken = taken.includes(slot.value)
@@ -225,10 +225,10 @@ export default function BookingWidget({ serviceId, serviceName, servicePrice, va
                   className={[
                     'py-1.5 rounded-xl text-xs border transition-colors',
                     isTaken
-                      ? 'bg-[#f7f7f7] text-[#c0c0c0] border-transparent cursor-not-allowed line-through'
+                      ? 'bg-[#F7E8E6] text-[#B6A4A7] border-transparent cursor-not-allowed line-through'
                       : isSelected
-                      ? 'font-semibold border-[#ff385c] text-[#ff385c]'
-                      : 'border-[#ebebeb] text-[#3f3f3f] hover:border-[#ff385c] hover:text-[#ff385c] cursor-pointer',
+                      ? 'font-semibold border-[#B86A82] text-[#B86A82]'
+                      : 'border-[#EFE0DD] text-[#8A7176] hover:border-[#B86A82] hover:text-[#B86A82] cursor-pointer',
                   ].join(' ')}
                 >
                   {slot.label}
@@ -257,14 +257,14 @@ export default function BookingWidget({ serviceId, serviceName, servicePrice, va
       >
         Reservar ahora
       </button>
-      <p className="text-xs text-[#929292] text-center mt-2">No se cobra hasta confirmar la cita</p>
+      <p className="text-xs text-[#B6A4A7] text-center mt-2">No se cobra hasta confirmar la cita</p>
 
-      <div className="mt-5 pt-5 border-t border-[#dddddd] space-y-2 text-sm text-[#3f3f3f]">
+      <div className="mt-5 pt-5 border-t border-[#EFE0DD] space-y-2 text-sm text-[#8A7176]">
         <div className="flex justify-between">
           <span>{serviceName}</span>
           <span>${displayPrice}</span>
         </div>
-        <div className="flex justify-between font-semibold text-[#222222] pt-2 border-t border-[#ebebeb]">
+        <div className="flex justify-between font-semibold text-[#3A2A2E] pt-2 border-t border-[#EFE0DD]">
           <span>Total</span>
           <span>${displayPrice}</span>
         </div>

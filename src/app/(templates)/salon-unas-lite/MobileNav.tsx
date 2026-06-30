@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { usePathname } from 'next/navigation'
-import { BRAND, NAV_LINKS } from './constants'
+import { BRAND, SHADOW, NAV_LINKS } from './constants'
 
 export default function MobileNav() {
   const [open, setOpen] = useState(false)
@@ -14,14 +14,14 @@ export default function MobileNav() {
     <>
       <button
         onClick={() => setOpen(o => !o)}
-        className="md:hidden w-9 h-9 flex items-center justify-center rounded-full text-[#222] hover:bg-[#f7f7f7] transition-colors"
+        className="md:hidden w-9 h-9 flex items-center justify-center rounded-full text-[#3A2A2E] hover:bg-[#F7E8E6] transition-colors"
         aria-label="Menú"
       >
         {open ? <X size={20} /> : <Menu size={20} />}
       </button>
 
       {open && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-[#ebebeb] shadow-sm z-50">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-[#EFE0DD] z-50" style={{ boxShadow: SHADOW.soft }}>
           <nav className="flex flex-col py-2">
             {NAV_LINKS.map(l => (
               <Link
@@ -30,8 +30,8 @@ export default function MobileNav() {
                 onClick={() => setOpen(false)}
                 className={`px-6 py-3.5 text-sm font-medium transition-colors ${
                   pathname === l.href
-                    ? 'text-[#222] bg-[#f7f7f7]'
-                    : 'text-[#3f3f3f] hover:text-[#222] hover:bg-[#f7f7f7]'
+                    ? 'text-[#3A2A2E] bg-[#F7E8E6]'
+                    : 'text-[#8A7176] hover:text-[#3A2A2E] hover:bg-[#F7E8E6]'
                 }`}
               >
                 {l.label}

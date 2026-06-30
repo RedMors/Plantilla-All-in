@@ -5,7 +5,7 @@ import { Suspense } from 'react'
 import { Calendar, Award, ShieldCheck, Scissors, ArrowRight, Images, Phone } from 'lucide-react'
 import { getServices } from '@/lib/salon/queries'
 import SearchBar from './SearchBar'
-import { BRAND } from './constants'
+import { BRAND, SHADOW } from './constants'
 
 export const dynamic = 'force-dynamic'
 
@@ -71,13 +71,13 @@ export default async function SalonUnasHome() {
         </div>
 
         {/* STATS */}
-        <div className="border-b border-[#ebebeb]">
+        <div className="border-b border-[#EFE0DD]">
           <div className="max-w-4xl mx-auto px-6 py-5 grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
             {STATIC_STATS.map(({ Icon, label, sub }) => (
               <div key={label} className="flex flex-col items-center gap-1">
                 <Icon size={20} color={BRAND} strokeWidth={1.8} />
-                <p className="text-sm font-semibold text-[#222222]">{label}</p>
-                <p className="text-xs text-[#6a6a6a]">{sub}</p>
+                <p className="text-sm font-semibold text-[#3A2A2E]">{label}</p>
+                <p className="text-xs text-[#8A7176]">{sub}</p>
               </div>
             ))}
           </div>
@@ -85,7 +85,7 @@ export default async function SalonUnasHome() {
 
         {/* SEARCH */}
         <div className="max-w-3xl mx-auto px-6 py-8">
-          <Suspense fallback={<div className="h-14 rounded-full bg-[#f7f7f7] animate-pulse" />}>
+          <Suspense fallback={<div className="h-14 rounded-full bg-[#F7E8E6] animate-pulse" />}>
             <SearchBar />
           </Suspense>
         </div>
@@ -93,12 +93,12 @@ export default async function SalonUnasHome() {
 
       {/* FEATURED SERVICES */}
       {featured.length > 0 && (
-        <section className="py-14 px-6 bg-[#f7f7f7]">
+        <section className="py-14 px-6 bg-[#F7E8E6]">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-end justify-between mb-8">
               <div>
-                <h2 className="text-2xl font-bold text-[#222222]">Servicios populares</h2>
-                <p className="text-sm text-[#6a6a6a] mt-1">Los favoritos de nuestras clientas</p>
+                <h2 className="text-2xl font-bold text-[#3A2A2E]">Servicios populares</h2>
+                <p className="text-sm text-[#8A7176] mt-1">Los favoritos de nuestras clientas</p>
               </div>
               <Link
                 href="/salon-unas-lite/servicios"
@@ -113,10 +113,10 @@ export default async function SalonUnasHome() {
                 <Link
                   key={s.slug}
                   href={`/salon-unas-lite/servicios/${s.slug}`}
-                  className="bg-white rounded-2xl overflow-hidden group"
-                  style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}
+                  className="bg-white rounded-[24px] overflow-hidden group transition-transform hover:-translate-y-0.5"
+                  style={{ boxShadow: SHADOW.soft }}
                 >
-                  <div className="relative h-36 w-full bg-[#f7f7f7]">
+                  <div className="relative h-36 w-full bg-[#F7E8E6]">
                     {s.image_url ? (
                       <ServiceImage
                         src={s.image_url}
@@ -136,8 +136,8 @@ export default async function SalonUnasHome() {
                     )}
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-[#222222] text-sm mb-1 group-hover:underline">{s.name}</h3>
-                    <p className="text-xs text-[#6a6a6a] line-clamp-2 mb-3">{s.tagline}</p>
+                    <h3 className="font-semibold text-[#3A2A2E] text-sm mb-1 group-hover:underline">{s.name}</h3>
+                    <p className="text-xs text-[#8A7176] line-clamp-2 mb-3">{s.tagline}</p>
                     <p className="font-bold text-sm" style={{ color: BRAND }}>Desde ${s.price}</p>
                   </div>
                 </Link>
@@ -148,16 +148,16 @@ export default async function SalonUnasHome() {
       )}
 
       {/* SECTION CARDS */}
-      <section className="py-14 px-6 bg-white">
+      <section className="py-14 px-6 bg-[#FBF4F1]">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl font-bold text-[#222222] text-center mb-2">Explora el salón</h2>
-          <p className="text-sm text-[#6a6a6a] text-center mb-10">Todo lo que necesitas en un solo lugar</p>
+          <h2 className="text-2xl font-bold text-[#3A2A2E] text-center mb-2">Explora el salón</h2>
+          <p className="text-sm text-[#8A7176] text-center mb-10">Todo lo que necesitas en un solo lugar</p>
           <div className="grid sm:grid-cols-2 gap-4">
             {SECTION_CARDS.map(({ href, Icon, title, desc }) => (
               <Link
                 key={href}
                 href={href}
-                className="flex items-start gap-4 p-5 rounded-2xl border border-[#ebebeb] hover:border-[#222] hover:shadow-sm transition-all group"
+                className="flex items-start gap-4 p-5 rounded-2xl border border-[#EFE0DD] hover:border-[#B86A82] hover:-translate-y-0.5 transition-all group"
               >
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-white"
@@ -166,10 +166,10 @@ export default async function SalonUnasHome() {
                   <Icon size={18} />
                 </div>
                 <div>
-                  <p className="font-semibold text-[#222222] text-sm group-hover:underline">{title}</p>
-                  <p className="text-xs text-[#6a6a6a] mt-1 leading-relaxed">{desc}</p>
+                  <p className="font-semibold text-[#3A2A2E] text-sm group-hover:underline">{title}</p>
+                  <p className="text-xs text-[#8A7176] mt-1 leading-relaxed">{desc}</p>
                 </div>
-                <ArrowRight size={16} className="ml-auto text-[#ccc] group-hover:text-[#222] transition-colors shrink-0 mt-0.5" />
+                <ArrowRight size={16} className="ml-auto text-[#B6A4A7] group-hover:text-[#3A2A2E] transition-colors shrink-0 mt-0.5" />
               </Link>
             ))}
           </div>

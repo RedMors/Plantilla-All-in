@@ -1,7 +1,14 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Plus_Jakarta_Sans } from 'next/font/google'
 import MobileNav from './MobileNav'
-import { BRAND, NAV_LINKS } from './constants'
+import { BRAND, BLUSH, PLUM, MAUVE, MAUVE_SOFT, LINE, NAV_LINKS } from './constants'
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-jakarta',
+})
 
 export const metadata: Metadata = {
   title: 'Nails by Mariela — San Salvador',
@@ -11,10 +18,13 @@ export const metadata: Metadata = {
 export default function SalonUnasLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
-      style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
-      className="min-h-screen bg-white text-[#222222] flex flex-col"
+      className={`${jakarta.variable} min-h-screen flex flex-col`}
+      style={{ fontFamily: 'var(--font-jakarta), sans-serif', background: BLUSH, color: PLUM }}
     >
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#ebebeb]">
+      <header
+        className="sticky top-0 z-50 backdrop-blur-sm border-b"
+        style={{ background: 'rgba(251,244,241,0.95)', borderColor: LINE }}
+      >
         {/* relative aquí —  NO en el sticky — evita bug de containing block en Safari/Firefox */}
         <div className="relative">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
@@ -25,7 +35,7 @@ export default function SalonUnasLayout({ children }: { children: React.ReactNod
             >
               N
             </span>
-            <span className="font-semibold text-[#222222] hidden sm:block">Nails by Mariela</span>
+            <span className="font-semibold hidden sm:block" style={{ color: PLUM }}>Nails by Mariela</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
@@ -33,7 +43,8 @@ export default function SalonUnasLayout({ children }: { children: React.ReactNod
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-sm font-medium text-[#3f3f3f] hover:text-[#222222] transition-colors"
+                className="text-sm font-medium transition-colors"
+                style={{ color: MAUVE }}
               >
                 {l.label}
               </Link>
@@ -56,7 +67,7 @@ export default function SalonUnasLayout({ children }: { children: React.ReactNod
 
       <main className="flex-1">{children}</main>
 
-      <footer className="bg-[#222222] text-white py-8 px-6">
+      <footer className="text-white py-8 px-6" style={{ background: PLUM }}>
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <Link href="/salon-unas-lite" className="flex items-center gap-2">
             <span
@@ -70,13 +81,13 @@ export default function SalonUnasLayout({ children }: { children: React.ReactNod
 
           <nav className="flex items-center gap-6">
             {NAV_LINKS.map(l => (
-              <Link key={l.href} href={l.href} className="text-xs text-[#929292] hover:text-white transition-colors">
+              <Link key={l.href} href={l.href} className="text-xs text-white/70 hover:text-white transition-colors">
                 {l.label}
               </Link>
             ))}
           </nav>
 
-          <p className="text-xs text-[#6a6a6a]">© {new Date().getFullYear()} · San Salvador, El Salvador</p>
+          <p className="text-xs" style={{ color: MAUVE_SOFT }}>© {new Date().getFullYear()} · San Salvador, El Salvador</p>
         </div>
       </footer>
     </div>

@@ -10,13 +10,13 @@ export default async function GaleriaPage() {
     <div className="py-12 px-6">
       <div className="max-w-6xl mx-auto">
         <div className="mb-10 text-center">
-          <h1 className="text-3xl font-bold text-[#222222] mb-2">Nuestro trabajo</h1>
-          <p className="text-[#6a6a6a]">Cada diseño es hecho a mano con amor y precisión</p>
+          <h1 className="text-3xl font-bold text-[#3A2A2E] mb-2">Nuestro trabajo</h1>
+          <p className="text-[#8A7176]">Cada diseño es hecho a mano con amor y precisión</p>
         </div>
 
         {gallery.length === 0 ? (
-          <div className="text-center py-20 text-[#6a6a6a]">
-            <p className="text-lg font-semibold text-[#222]">Galería en preparación</p>
+          <div className="text-center py-20 text-[#8A7176]">
+            <p className="text-lg font-semibold text-[#3A2A2E]">Galería en preparación</p>
             <p className="text-sm mt-2">Pronto encontrarás aquí todos nuestros trabajos.</p>
           </div>
         ) : (

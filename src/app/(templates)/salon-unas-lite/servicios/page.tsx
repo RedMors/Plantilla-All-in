@@ -4,7 +4,7 @@ import { Suspense } from 'react'
 import { Scissors, Search } from 'lucide-react'
 import { getServices } from '@/lib/salon/queries'
 import SearchBar from '../SearchBar'
-import { BRAND } from '../constants'
+import { BRAND, SHADOW } from '../constants'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,10 +23,10 @@ export default async function ServiciosPage({
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-[#222222] mb-2">
+          <h1 className="text-3xl font-bold text-[#3A2A2E] mb-2">
             {query ? `Resultados para "${q}"` : 'Nuestros servicios'}
           </h1>
-          <p className="text-[#6a6a6a]">
+          <p className="text-[#8A7176]">
             {query
               ? `${services.length} servicio${services.length !== 1 ? 's' : ''} encontrado${services.length !== 1 ? 's' : ''}`
               : 'Cada servicio incluye atención personalizada y materiales de calidad'}
@@ -40,7 +40,7 @@ export default async function ServiciosPage({
 
         {/* Search */}
         <div className="max-w-xl mx-auto mb-10">
-          <Suspense fallback={<div className="h-14 rounded-full bg-[#f7f7f7] animate-pulse" />}>
+          <Suspense fallback={<div className="h-14 rounded-full bg-[#F7E8E6] animate-pulse" />}>
             <SearchBar />
           </Suspense>
         </div>
@@ -48,9 +48,9 @@ export default async function ServiciosPage({
         {/* Empty state */}
         {services.length === 0 && (
           <div className="text-center py-16">
-            <Search size={48} className="mx-auto mb-4 text-[#ccc]" />
-            <p className="text-lg font-semibold text-[#222222] mb-2">Sin resultados para &ldquo;{q}&rdquo;</p>
-            <p className="text-sm text-[#6a6a6a] mb-6">Prueba con &quot;manicure&quot;, &quot;pedicure&quot; o &quot;nail art&quot;</p>
+            <Search size={48} className="mx-auto mb-4 text-[#B6A4A7]" />
+            <p className="text-lg font-semibold text-[#3A2A2E] mb-2">Sin resultados para &ldquo;{q}&rdquo;</p>
+            <p className="text-sm text-[#8A7176] mb-6">Prueba con &quot;manicure&quot;, &quot;pedicure&quot; o &quot;nail art&quot;</p>
             <Link href="/salon-unas-lite/servicios" className="px-6 py-2.5 rounded-full text-sm font-semibold text-white" style={{ background: BRAND }}>
               Ver todos los servicios
             </Link>
@@ -62,10 +62,10 @@ export default async function ServiciosPage({
           {services.map(service => (
             <div
               key={service.slug}
-              className="bg-white rounded-2xl overflow-hidden flex flex-col border border-[#ebebeb]"
-              style={{ boxShadow: '0 1px 8px rgba(0,0,0,0.06)' }}
+              className="bg-white rounded-[24px] overflow-hidden flex flex-col border border-[#EFE0DD] transition-transform hover:-translate-y-0.5"
+              style={{ boxShadow: SHADOW.soft }}
             >
-              <div className="relative h-44 w-full overflow-hidden bg-[#f7f7f7]">
+              <div className="relative h-44 w-full overflow-hidden bg-[#F7E8E6]">
                 {service.image_url ? (
                   <ServiceImage
                     src={service.image_url}
@@ -85,13 +85,13 @@ export default async function ServiciosPage({
                 )}
               </div>
               <div className="p-5 flex flex-col flex-1 gap-2">
-                <h2 className="font-bold text-[#222222] text-base">{service.name}</h2>
-                <p className="text-sm text-[#6a6a6a] leading-relaxed flex-1 line-clamp-3">
+                <h2 className="font-bold text-[#3A2A2E] text-base">{service.name}</h2>
+                <p className="text-sm text-[#8A7176] leading-relaxed flex-1 line-clamp-3">
                   {service.description ?? service.tagline}
                 </p>
-                <div className="flex items-center justify-between pt-3 border-t border-[#ebebeb] mt-1">
+                <div className="flex items-center justify-between pt-3 border-t border-[#EFE0DD] mt-1">
                   <div>
-                    <p className="text-xs text-[#929292]">Desde</p>
+                    <p className="text-xs text-[#B6A4A7]">Desde</p>
                     <p className="font-bold text-lg" style={{ color: BRAND }}>${service.price}</p>
                   </div>
                   <Link
