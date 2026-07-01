@@ -198,7 +198,9 @@ export async function bookAppointment(formData: FormData): Promise<BookingResult
     }
   } catch (e) {
     console.error('[bookAppointment] payment init failed:', e)
-    await db.from(PAYMENTS_TABLE).update({ status: 'failed' }).eq('id', payRow.id)
+    // El cobro no arrancó: borramos la cita para liberar el horario (el pago cae por cascade).
+    // Si no, la cita 'pending' bloquearía ese slot aunque nunca se generó un enlace/invoice.
+    await db.from(APPOINTMENTS_TABLE).delete().eq('id', appt.id)
     return { error: 'No se pudo iniciar el pago. Intenta de nuevo o elige otro método.' }
   }
 }

@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     const db = adminDb()
     const { data: pay } = await db
       .from(PAYMENTS_TABLE)
-      .select('id, status, appointment_id')
+      .select('id, status, appointment_id, amount')
       .eq('provider_reference', reference)
       .eq('method', 'card')
       .maybeSingle()
@@ -59,6 +59,13 @@ export async function POST(req: NextRequest) {
 
     if (pay.status === 'paid') {
       return NextResponse.json({ received: true, info: 'already_paid' })
+    }
+
+    // Defensa en profundidad: el monto pagado debe coincidir con el esperado (tolerancia 1 centavo).
+    const montoPagado = Number(payload.Monto ?? 0)
+    if (approved && Math.abs(montoPagado - Number(pay.amount)) > 0.01) {
+      console.error(`[Wompi webhook] monto no coincide: esperado ${pay.amount}, recibido ${montoPagado} (reference=${reference})`)
+      return NextResponse.json({ received: true, warning: 'amount_mismatch' })
     }
 
     if (approved) {
