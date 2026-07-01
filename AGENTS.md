@@ -85,5 +85,15 @@ No explores el directorio de skills. Invoca directamente según estas reglas:
   - **`salon-unas-lite` (lite)** — rosa/suave. BRAND `#B86A82` · ROSE_DEEP `#934F66` · BLUSH `#FBF4F1` · PLUM `#3A2A2E`. Sans Plus Jakarta, sombras rosadas. ⏳ Tokens listos en `constants.ts`; falta migrar componentes (Migration map en su DESIGN.md).
 - **Naming:** usar nombres descriptivos (`lite` / `full`), NO marcas poéticas tipo "Studio Élite" / "Blush Studio".
 - **Estado del proyecto y roadmap de plantillas:** ver `ESTADO.md` en la raíz.
-- **NUNCA tocar:** `~/Trip-App/` ni `~/akatrek-app/` (producción Akatrek)
+- **NUNCA tocar:** `~/Trip-App/` ni `~/akatrek-app/` (producción Akatrek) — solo lectura como referencia
 - **NUNCA en client components:** `SUPABASE_SERVICE_ROLE_KEY`
+
+## Referencia de pagos — Akatrek (SOLO LECTURA)
+
+Para implementar Wompi/Lightning aquí, adaptar (NO copiar textual, NO modificar el origen) desde:
+- **Wompi** (OAuth + EnlacePago + verificación HMAC): `~/Trip-App/src/lib/wompi.ts`
+- **Lightning/Blink** (invoice USD GraphQL): `~/Trip-App/src/lib/blink.ts`
+- **Webhooks**: `~/Trip-App/src/app/api/trips/wompi/webhook/` · `~/Trip-App/src/app/api/blink/webhook/`
+- **Graphify** (para ubicar archivos rápido): `~/Trip-App/.claude/CODEBASE_MAP.md`
+
+Plan completo y env vars: ver sección **Pagos** en `ESTADO.md`.

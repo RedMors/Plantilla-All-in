@@ -14,7 +14,7 @@
 
 | Rubro | Ruta | Prefijo DB | Estado |
 | ----- | ---- | ---------- | ------ |
-| Salón de uñas — **full** | `/salon-unas` | `nail_` | ✅ Implementada (admin, pagos cash, mapa, galería) |
+| Salón de uñas — **full** | `/salon-unas` | `nail_` | ✅ Implementada (admin, pagos cash, mapa, galería). 🟡 Wompi + Lightning en integración |
 | Salón de uñas — **lite** | `/salon-unas-lite` | `nail_` | 🟡 Funcional, pero **rediseño rosa pendiente** |
 | Carwash | `/carwash` | `carwash_` | ⏳ Pendiente |
 | Vivero | `/vivero` | `vivero_` | ⏳ Pendiente |
@@ -80,8 +80,67 @@ src/templates/_base/
 └── design-references/
     └── airbnb-lite-legacy.md         análisis Airbnb (identidad vieja del lite, histórico)
 
-src/lib/payments/   flujo de pagos (cash; card/lightning pendientes)
+src/lib/payments/   flujo de pagos (cash ✅; card/Wompi + lightning/Blink en integración)
 src/lib/salon/      queries Supabase del salón
+```
+
+---
+
+## Pagos — Wompi (tarjeta) + Lightning (Blink)
+
+**Estado:** ✅ **Wompi (tarjeta) y Lightning (Blink) implementados y verificados end-to-end** en local.
+`config.methods: ['cash','card','lightning']`. Credenciales en `.env.local` (Wompi test app + Blink USD wallet).
+URL de producción (Vercel): `https://plantillas-zeta.vercel.app`.
+Se reusó la lógica probada de **Akatrek (`~/Trip-App/`) como referencia de SOLO LECTURA**
+— adaptada (no copiada textual) al patrón de `src/lib/payments/`.
+
+### Lo implementado (este pase)
+- `src/lib/payments/wompi.ts` → OAuth client-credentials + `POST /EnlacePago` +
+  `verifyWompiWebhook` (HMAC) + `consultWompiEnlacePago` (reconciliar).
+- `src/lib/payments/lightning.ts` → `createLightningInvoice` + `getLightningStatus` (polling) +
+  `verifyBlinkSecret` (Blink usa `?secret=` en la URL, NO HMAC).
+- Webhooks: `src/app/api/payments/wompi/webhook/route.ts` y `.../blink/webhook/route.ts`
+  → `status='paid'`, `paid_at`, cita `confirmed`, `provider_payload` crudo.
+- `actions.ts`: `bookAppointment` ramifica por método (cash / redirect Wompi / invoice Lightning).
+  Nueva action `checkLightningPayment(paymentId)` para polling desde el cliente.
+- `BookingWidget.tsx`: selector gateado por `config.methods`, redirect a Wompi, paso Lightning
+  (deep link `lightning:` + invoice copiable + spinner de espera + polling cada 4s).
+- `template.config.ts`: `methods: ['cash', 'card', 'lightning']`. Credenciales en `.env.local`.
+
+### Estructura multi-cliente (credenciales por plantilla)
+`src/lib/payments/credentials.ts` resuelve las llaves por prefijo: busca la específica del
+cliente (`WOMPI_PUBLIC_KEY_<PREFIJO>`, `BLINK_API_KEY_<PREFIJO>`, …) y cae a la compartida
+(`WOMPI_PUBLIC_KEY`, `BLINK_API_KEY`, …). Activar un cliente con cuenta propia = SOLO agregar
+env vars con el sufijo del prefijo; cero código.
+
+Reglas operativas de la config actual de demos (detalle sensible en la memoria privada del asistente):
+- **NO registrar el webhook de Blink** en el dashboard (un solo callback por cuenta).
+- El salón confirma Lightning con **polling** (`checkLightningPayment`), no necesita webhook.
+
+### Lo que falta para cerrar (producción en Vercel)
+- **Agregar en Vercel** las env vars de pago (hoy Vercel solo tiene las 3 de Supabase):
+  `NEXT_PUBLIC_APP_URL=https://plantillas-zeta.vercel.app`, `WOMPI_PUBLIC_KEY`, `WOMPI_PRIVATE_KEY`,
+  `WOMPI_EVENTS_SECRET`, `BLINK_API_KEY`, `BLINK_WALLET_ID`, `BLINK_WEBHOOK_SECRET`.
+- **Commit + push** del código de pagos (hoy está sin subir → prod corre código viejo sin pagos).
+- **Wompi panel:** Redirect `…/salon-unas/servicios?pago=ok` y webhook `…/api/payments/wompi/webhook`.
+- Correr **`security-review`** antes de mergear (regla AGENTS.md).
+- ⚠️ Secrets de Wompi/Blink viajaron por chat → **rotarlos** al montar en prod.
+
+### Referencia Akatrek (read-only — NUNCA modificar `~/Trip-App/`)
+| Necesito… | Mirar en Akatrek |
+| --- | --- |
+| OAuth + EnlacePago + verificación de firma Wompi | `~/Trip-App/src/lib/wompi.ts` |
+| Invoice USD Lightning (GraphQL Blink) | `~/Trip-App/src/lib/blink.ts` |
+| Handler de webhook Wompi | `~/Trip-App/src/app/api/trips/wompi/webhook/route.ts` |
+| Handler de webhook Blink | `~/Trip-App/src/app/api/blink/webhook/route.ts` |
+| Mapa para ubicar cualquier cosa | `~/Trip-App/.claude/CODEBASE_MAP.md` (graphify) |
+
+### Env vars necesarias (mismos nombres que Akatrek)
+```
+WOMPI_PUBLIC_KEY=        WOMPI_PRIVATE_KEY=
+WOMPI_WEBHOOK_SECRET=    WOMPI_EVENTS_SECRET=      # HMAC — REQUERIDO en prod
+BLINK_API_KEY=          BLINK_WALLET_ID=          # wallet USD stablesats
+BLINK_WEBHOOK_SECRET=                             # HMAC — REQUERIDO en prod
 ```
 
 ---

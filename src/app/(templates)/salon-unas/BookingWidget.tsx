@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useEffect, useTransition } from 'react'
 import Image from 'next/image'
-import { CheckCircle, ArrowRight, ArrowLeft, Banknote, CreditCard, Zap, Copy, Check } from 'lucide-react'
-import { bookAppointment } from './actions'
+import { CheckCircle, ArrowRight, ArrowLeft, Banknote, CreditCard, Zap, Copy, Check, Loader2 } from 'lucide-react'
+import { bookAppointment, checkLightningPayment } from './actions'
 import { BRAND, BRAND_LIGHT, INK, CREAM, STONE } from './constants'
 import PhoneInput from './PhoneInput'
 
@@ -18,6 +18,7 @@ type Props = {
   takenSlots: Record<string, string[]>
   rating?: number
   reviewCount?: number
+  methods?: ('cash' | 'card' | 'lightning')[]
 }
 
 const SLOTS = [
@@ -44,7 +45,7 @@ const inputClass =
 const labelClass =
   'block text-[10px] font-semibold tracking-[0.2em] uppercase text-[#B0A89E] mb-1.5'
 
-type Step = 'slot' | 'payment' | 'form' | 'success'
+type Step = 'slot' | 'payment' | 'form' | 'lightning' | 'success'
 type PayMethod = 'cash' | 'card' | 'lightning'
 
 export default function BookingWidget({
@@ -56,6 +57,7 @@ export default function BookingWidget({
   takenSlots,
   rating,
   reviewCount,
+  methods = ['cash'],
 }: Props) {
   const [date, setDate] = useState(todayStr)
   const [time, setTime] = useState('09:00')
@@ -69,6 +71,8 @@ export default function BookingWidget({
   const [errorMsg, setErrorMsg] = useState('')
   const [refCode, setRefCode] = useState('')
   const [copied, setCopied] = useState(false)
+  const [invoiceCopied, setInvoiceCopied] = useState(false)
+  const [lnInvoice, setLnInvoice] = useState<{ paymentId: string; bolt11: string; expiresAt: string } | null>(null)
   const [isPending, startTransition] = useTransition()
 
   const taken = takenSlots[date] ?? []
@@ -105,11 +109,48 @@ export default function BookingWidget({
       const result = await bookAppointment(fd)
       if ('error' in result) {
         setErrorMsg(result.error)
-      } else {
-        setRefCode(result.refCode)
-        setStep('success')
+        return
       }
+      setRefCode(result.refCode)
+      if (result.method === 'card') {
+        // Redirige al checkout de Wompi
+        window.location.href = result.redirectUrl
+        return
+      }
+      if (result.method === 'lightning') {
+        setLnInvoice({ paymentId: result.paymentId, bolt11: result.bolt11, expiresAt: result.expiresAt })
+        setStep('lightning')
+        return
+      }
+      setStep('success') // efectivo
     })
+  }
+
+  // Polling del estado del pago Lightning mientras se muestra la factura
+  useEffect(() => {
+    if (step !== 'lightning' || !lnInvoice) return
+    let active = true
+    const iv = setInterval(async () => {
+      const r = await checkLightningPayment(lnInvoice.paymentId)
+      if (!active || !('status' in r)) return
+      if (r.status === 'paid') {
+        clearInterval(iv)
+        setStep('success')
+      } else if (r.status === 'expired') {
+        clearInterval(iv)
+        setErrorMsg('La factura Lightning expiró. Elige el método de pago otra vez.')
+        setLnInvoice(null)
+        setStep('payment')
+      }
+    }, 4000)
+    return () => { active = false; clearInterval(iv) }
+  }, [step, lnInvoice])
+
+  function copyInvoice() {
+    if (!lnInvoice) return
+    navigator.clipboard.writeText(lnInvoice.bolt11)
+    setInvoiceCopied(true)
+    setTimeout(() => setInvoiceCopied(false), 2000)
   }
 
   const widgetBase = {
@@ -118,9 +159,9 @@ export default function BookingWidget({
   }
 
   const PAY_OPTIONS: { id: PayMethod; label: string; sub: string; Icon: React.ElementType; available: boolean }[] = [
-    { id: 'cash', label: 'Efectivo', sub: 'Paga al llegar', Icon: Banknote, available: true },
-    { id: 'card', label: 'Tarjeta', sub: 'Visa / Mastercard', Icon: CreditCard, available: false },
-    { id: 'lightning', label: 'Lightning', sub: 'Bitcoin', Icon: Zap, available: false },
+    { id: 'cash', label: 'Efectivo', sub: 'Paga al llegar', Icon: Banknote, available: methods.includes('cash') },
+    { id: 'card', label: 'Tarjeta', sub: 'Visa / Mastercard', Icon: CreditCard, available: methods.includes('card') },
+    { id: 'lightning', label: 'Lightning', sub: 'Bitcoin', Icon: Zap, available: methods.includes('lightning') },
   ]
 
   // ── SUCCESS ──────────────────────────────────────────────
@@ -172,6 +213,62 @@ export default function BookingWidget({
           style={{ color: BRAND }}
         >
           Hacer otra reserva
+        </button>
+      </div>
+    )
+  }
+
+  // ── LIGHTNING ────────────────────────────────────────────
+  if (step === 'lightning' && lnInvoice) {
+    return (
+      <div id="booking-widget" className="sticky top-24 p-8" style={widgetBase}>
+        <p className="text-[10px] font-semibold tracking-[0.25em] uppercase mb-1" style={{ color: BRAND }}>
+          Paga con Lightning
+        </p>
+        <h3 className="text-lg font-bold tracking-tight mb-1" style={{ color: INK }}>
+          {serviceName}
+        </h3>
+        <p className="text-xs text-[#6B6560] capitalize mb-6">
+          {dateLabel} · {selectedSlotLabel} · <strong style={{ color: INK }}>${displayPrice}</strong>
+        </p>
+
+        <div className="flex items-center gap-2 mb-6 text-sm" style={{ color: '#6B6560' }}>
+          <Loader2 size={16} className="animate-spin" style={{ color: BRAND }} />
+          Esperando la confirmación del pago…
+        </div>
+
+        <a
+          href={`lightning:${lnInvoice.bolt11}`}
+          className="w-full py-4 mb-4 text-white text-sm font-semibold tracking-wide flex items-center justify-center gap-2 hover:opacity-85 transition-opacity"
+          style={{ background: BRAND }}
+        >
+          <Zap size={15} strokeWidth={1.5} />
+          Abrir en mi wallet
+        </a>
+
+        {/* Invoice copiable */}
+        <div className="border border-[#EDE9E3] p-4 mb-4" style={{ background: '#F5EFE8' }}>
+          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[#B0A89E] mb-1">
+            Invoice (BOLT11)
+          </p>
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-mono break-all text-[#6B6560]">
+              {lnInvoice.bolt11.slice(0, 28)}…
+            </span>
+            <button onClick={copyInvoice} className="shrink-0 transition-colors" style={{ color: BRAND }}>
+              {invoiceCopied ? <Check size={15} strokeWidth={2} /> : <Copy size={15} strokeWidth={1.5} />}
+            </button>
+          </div>
+        </div>
+
+        <p className="text-xs text-[#B0A89E] mb-5">La factura expira en 1 hora. La confirmación es automática.</p>
+
+        <button
+          onClick={() => { setLnInvoice(null); setErrorMsg(''); setStep('payment') }}
+          className="text-[11px] font-semibold tracking-[0.12em] uppercase transition-colors"
+          style={{ color: BRAND }}
+        >
+          Cambiar método de pago
         </button>
       </div>
     )
@@ -254,10 +351,18 @@ export default function BookingWidget({
             className="w-full py-4 text-white text-sm font-semibold tracking-wide flex items-center justify-center gap-2 hover:opacity-85 transition-opacity disabled:opacity-40"
             style={{ background: BRAND }}
           >
-            {isPending ? 'Reservando...' : 'Confirmar cita'}
+            {isPending
+              ? 'Procesando...'
+              : payMethod === 'card'
+                ? 'Ir a pagar'
+                : payMethod === 'lightning'
+                  ? 'Generar factura'
+                  : 'Confirmar cita'}
             {!isPending && <ArrowRight size={14} strokeWidth={1.5} />}
           </button>
-          <p className="text-[11px] text-[#B0A89E] text-center -mt-4">No se cobra hasta confirmar</p>
+          <p className="text-[11px] text-[#B0A89E] text-center -mt-4">
+            {payMethod === 'cash' ? 'No se cobra hasta confirmar' : 'Pago seguro · serás dirigido al cobro'}
+          </p>
         </form>
       </div>
     )

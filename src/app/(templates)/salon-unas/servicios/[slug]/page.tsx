@@ -10,6 +10,7 @@ import {
 } from '@/lib/salon/queries'
 import BookingWidget from '../../BookingWidget'
 import { BRAND, INK, CREAM } from '../../constants'
+import { config } from '../../template.config'
 
 export const dynamic = 'force-dynamic'
 
@@ -203,6 +204,7 @@ export default async function ServiceDetailPage({
               takenSlots={takenSlots}
               rating={rating}
               reviewCount={testimonials.length}
+              methods={config.methods}
             />
           </div>
         </div>

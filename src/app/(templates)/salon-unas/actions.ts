@@ -3,13 +3,21 @@
 import { adminDb } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { config } from './template.config'
+import { createWompiPaymentLink } from '@/lib/payments/wompi'
+import { createLightningInvoice, getLightningStatus } from '@/lib/payments/lightning'
 
 const APPOINTMENTS_TABLE = `${config.prefix}_appointments` as const
 const PAYMENTS_TABLE     = `${config.prefix}_payments`     as const
 const SERVICES_TABLE     = `${config.prefix}_services`     as const
 const VARIANTS_TABLE     = `${config.prefix}_service_variants` as const
 
-export type BookingResult = { success: true; refCode: string } | { error: string }
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+
+export type BookingResult =
+  | { success: true; method: 'cash';      refCode: string }
+  | { success: true; method: 'card';      refCode: string; redirectUrl: string }
+  | { success: true; method: 'lightning'; refCode: string; paymentId: string; bolt11: string; expiresAt: string }
+  | { error: string }
 
 function generateRef(date: string): string {
   const d = date.replace(/-/g, '')
@@ -39,6 +47,11 @@ export async function bookAppointment(formData: FormData): Promise<BookingResult
   }
   const payMethod = payMethodRaw as PayMethod
 
+  // Solo se ofrecen los métodos habilitados en la config de la plantilla
+  if (!config.methods.includes(payMethod)) {
+    return { error: 'Ese método de pago no está disponible.' }
+  }
+
   const db = adminDb()
 
   // Rate limiting: máximo 2 citas pending por número de teléfono
@@ -64,23 +77,31 @@ export async function bookAppointment(formData: FormData): Promise<BookingResult
     return { error: 'Este horario ya fue reservado. Elige otro.' }
   }
 
-  // Fetch price (variant takes precedence over base service price)
+  // Fetch precio + nombre (la variante manda sobre el precio base del servicio)
   let amount = 0
+  let serviceName = config.name
+  const { data: svc } = await db
+    .from(SERVICES_TABLE)
+    .select('name, price')
+    .eq('id', serviceId)
+    .single()
+  if (svc) {
+    serviceName = svc.name ?? serviceName
+    amount = svc.price ?? 0
+  }
   if (variantId) {
     const { data: variant } = await db
       .from(VARIANTS_TABLE)
-      .select('price')
+      .select('name, price')
       .eq('id', variantId)
       .single()
-    amount = variant?.price ?? 0
+    if (variant?.price) amount = variant.price
+    if (variant?.name)  serviceName = `${serviceName} — ${variant.name}`
   }
-  if (!amount) {
-    const { data: svc } = await db
-      .from(SERVICES_TABLE)
-      .select('price')
-      .eq('id', serviceId)
-      .single()
-    amount = svc?.price ?? 0
+
+  // Pagos en línea (Wompi / Lightning) requieren un monto real
+  if (payMethod !== 'cash' && amount <= 0) {
+    return { error: 'Este servicio no tiene precio configurado para pago en línea.' }
   }
 
   const { data: appt, error } = await db
@@ -107,21 +128,121 @@ export async function bookAppointment(formData: FormData): Promise<BookingResult
 
   const refCode = generateRef(date)
 
-  const { error: payError } = await db.from(PAYMENTS_TABLE).insert({
-    appointment_id:    appt.id,
-    method:            payMethod,
-    status:            'pending',
-    amount:            amount > 0 ? amount : 0.01,
-    confirmation_code: refCode,
-  })
+  const { data: payRow, error: payError } = await db
+    .from(PAYMENTS_TABLE)
+    .insert({
+      appointment_id:    appt.id,
+      method:            payMethod,
+      status:            'pending',
+      amount:            amount > 0 ? amount : 0.01,
+      confirmation_code: refCode,
+    })
+    .select('id')
+    .single()
 
-  if (payError) {
-    console.error('[bookAppointment] nail_payments insert failed:', payError.message)
-    // La cita ya fue creada — no la revertimos, pero refCode no se muestra
+  if (payError || !payRow) {
+    console.error('[bookAppointment] payments insert failed:', payError?.message)
+    // La cita ya fue creada — no la revertimos. Tratamos como efectivo sin código.
     revalidatePath('/salon-unas', 'layout')
-    return { success: true, refCode: '' }
+    return { success: true, method: 'cash', refCode: '' }
   }
 
-  revalidatePath('/salon-unas', 'layout')
-  return { success: true, refCode }
+  // ── Efectivo: nada que cobrar en línea ──────────────────────────────────────
+  if (payMethod === 'cash') {
+    revalidatePath('/salon-unas', 'layout')
+    return { success: true, method: 'cash', refCode }
+  }
+
+  // ── Tarjeta (Wompi) / Lightning (Blink): iniciar el cobro ───────────────────
+  try {
+    if (payMethod === 'card') {
+      const { urlEnlace, idEnlace } = await createWompiPaymentLink({
+        prefix:      config.prefix,
+        reference:   appt.id,                       // = identificadorEnlaceComercio en el webhook
+        amountUsd:   amount,
+        productName: `${config.name} — ${serviceName}`,
+        redirectUrl: `${APP_URL}/salon-unas/servicios?pago=ok`,
+        webhookUrl:  `${APP_URL}/api/payments/wompi/webhook`,
+      })
+      await db
+        .from(PAYMENTS_TABLE)
+        .update({ provider_reference: appt.id, provider_url: urlEnlace, provider_payload: { idEnlace } })
+        .eq('id', payRow.id)
+
+      revalidatePath('/salon-unas', 'layout')
+      return { success: true, method: 'card', refCode, redirectUrl: urlEnlace }
+    }
+
+    // lightning
+    const invoice = await createLightningInvoice({
+      prefix:      config.prefix,
+      amountCents: Math.round(amount * 100),
+      memo:        `${config.name} — ${serviceName}`,
+    })
+    await db
+      .from(PAYMENTS_TABLE)
+      .update({
+        provider_reference: invoice.paymentHash,
+        provider_payload:   { bolt11: invoice.bolt11, expiresAt: invoice.expiresAt },
+      })
+      .eq('id', payRow.id)
+
+    revalidatePath('/salon-unas', 'layout')
+    return {
+      success:   true,
+      method:    'lightning',
+      refCode,
+      paymentId: payRow.id,
+      bolt11:    invoice.bolt11,
+      expiresAt: invoice.expiresAt,
+    }
+  } catch (e) {
+    console.error('[bookAppointment] payment init failed:', e)
+    await db.from(PAYMENTS_TABLE).update({ status: 'failed' }).eq('id', payRow.id)
+    return { error: 'No se pudo iniciar el pago. Intenta de nuevo o elige otro método.' }
+  }
+}
+
+/**
+ * Polling de un pago Lightning desde el cliente (fallback fiable al webhook de Blink).
+ * Si Blink confirma el pago, marca el payment 'paid' y la cita 'confirmed'.
+ */
+export async function checkLightningPayment(
+  paymentId: string,
+): Promise<{ status: 'pending' | 'paid' | 'expired' } | { error: string }> {
+  if (!paymentId) return { error: 'Falta paymentId.' }
+  const db = adminDb()
+
+  const { data: pay } = await db
+    .from(PAYMENTS_TABLE)
+    .select('id, status, appointment_id, provider_payload')
+    .eq('id', paymentId)
+    .single()
+
+  if (!pay) return { error: 'Pago no encontrado.' }
+  if (pay.status === 'paid')    return { status: 'paid' }
+  if (pay.status === 'expired') return { status: 'expired' }
+
+  const bolt11 = (pay.provider_payload as { bolt11?: string } | null)?.bolt11
+  if (!bolt11) return { error: 'Invoice no disponible.' }
+
+  let status: 'PENDING' | 'PAID' | 'EXPIRED'
+  try {
+    status = await getLightningStatus(config.prefix, bolt11)
+  } catch (e) {
+    console.error('[checkLightningPayment] Blink status error:', e)
+    return { status: 'pending' }
+  }
+
+  if (status === 'PAID') {
+    await db.from(PAYMENTS_TABLE).update({ status: 'paid', paid_at: new Date().toISOString() }).eq('id', pay.id)
+    await db.from(APPOINTMENTS_TABLE).update({ status: 'confirmed' }).eq('id', pay.appointment_id)
+    revalidatePath('/salon-unas', 'layout')
+    return { status: 'paid' }
+  }
+  if (status === 'EXPIRED') {
+    await db.from(PAYMENTS_TABLE).update({ status: 'expired' }).eq('id', pay.id)
+    return { status: 'expired' }
+  }
+  return { status: 'pending' }
 }
