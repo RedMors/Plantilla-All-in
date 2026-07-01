@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { Cormorant_Garamond } from 'next/font/google'
 import MobileNav from './MobileNav'
 import { NAV_LINKS } from './constants'
+import { CartProvider } from './tienda/cart-context'
+import CartIndicator from './tienda/CartIndicator'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -19,6 +21,7 @@ export const metadata: Metadata = {
 
 export default function SalonUnasLayout({ children }: { children: React.ReactNode }) {
   return (
+    <CartProvider>
     <div
       className={`${cormorant.variable} min-h-screen bg-[#FAF9F6] text-[#1A1A1A] flex flex-col`}
       style={{ fontFamily: 'var(--font-geist-sans, system-ui), sans-serif' }}
@@ -46,6 +49,7 @@ export default function SalonUnasLayout({ children }: { children: React.ReactNod
             </nav>
 
             <div className="flex items-center gap-3">
+              <CartIndicator />
               <MobileNav />
               <Link
                 href="/salon-unas/contacto"
@@ -114,5 +118,6 @@ export default function SalonUnasLayout({ children }: { children: React.ReactNod
         </div>
       </footer>
     </div>
+    </CartProvider>
   )
 }
