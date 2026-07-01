@@ -6,6 +6,7 @@ import { Minus, Plus, Trash2, Banknote, CreditCard, Zap, Copy, Check, Loader2, S
 import { useCart } from '../cart-context'
 import { createOrder, checkOrderPayment } from '../checkout-actions'
 import { BRAND, BRAND_LIGHT, INK, CREAM, STONE, MUTED } from '../../constants'
+import PhoneInput from '../../PhoneInput'
 
 type PayMethod = 'cash' | 'card' | 'lightning'
 type Step = 'cart' | 'lightning' | 'success'
@@ -158,7 +159,7 @@ export default function CheckoutClient({ methods }: { methods: readonly PayMetho
       {/* Datos */}
       <div className="grid gap-6 mb-8">
         <div><label className={label}>Nombre</label><input className={input} style={{ borderColor: STONE }} value={name} onChange={e => setName(e.target.value)} placeholder="Tu nombre completo" /></div>
-        <div><label className={label}>Teléfono / WhatsApp</label><input className={input} style={{ borderColor: STONE }} value={phone} onChange={e => setPhone(e.target.value)} placeholder="+503 0000-0000" /></div>
+        <PhoneInput name="phone" required value={phone} onChange={setPhone} />
         <div><label className={label}>Correo <span className="normal-case text-[#D4CCC0]">(opcional)</span></label><input className={input} style={{ borderColor: STONE }} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="para el comprobante" /></div>
       </div>
 
