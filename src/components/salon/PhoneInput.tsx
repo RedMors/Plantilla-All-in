@@ -29,20 +29,23 @@ const COUNTRIES: Country[] = [
   { code: 'ES', dial: '+34',  flag: '🇪🇸', min: 9,  max: 9  },
 ]
 
-const inputClass =
-  'flex-1 bg-transparent outline-none text-sm placeholder-[#B0A89E] min-w-0 py-2.5'
-const labelClass =
-  'block text-[10px] font-semibold tracking-[0.2em] uppercase text-[#B0A89E] mb-1.5'
-
 type Props = {
   name: string
   required?: boolean
   value: string
   onChange: (full: string) => void
   placeholder?: string
+  // Tema (defaults = paleta oro de salon-unas, para no romper los usos existentes)
+  borderColor?: string
+  accentColor?: string
+  textColor?: string
+  mutedColor?: string
 }
 
-export default function PhoneInput({ name, required, value, onChange, placeholder }: Props) {
+export default function PhoneInput({
+  name, required, value, onChange, placeholder,
+  borderColor = '#EDE9E3', accentColor = '#C4965A', textColor = '#1A1A1A', mutedColor = '#B0A89E',
+}: Props) {
   const [country, setCountry] = useState<Country>(COUNTRIES[0])
   const [local, setLocal] = useState('')
 
@@ -54,18 +57,26 @@ export default function PhoneInput({ name, required, value, onChange, placeholde
 
   const isValid = local.length >= country.min
   const hint = `${country.min}${country.min !== country.max ? `–${country.max}` : ''} dígitos`
+  const inputClass = 'flex-1 bg-transparent outline-none text-sm min-w-0 py-2.5'
+  const labelClass = 'block text-[10px] font-semibold tracking-[0.2em] uppercase mb-1.5'
 
   return (
     <div>
-      <label className={labelClass}>Teléfono / WhatsApp</label>
-      <div className="flex items-center border-b border-[#EDE9E3] focus-within:border-[#C4965A] transition-colors gap-2">
+      <label className={labelClass} style={{ color: mutedColor }}>Teléfono / WhatsApp</label>
+      <div
+        className="flex items-center transition-colors gap-2"
+        style={{ borderBottom: `1px solid ${borderColor}` }}
+        onFocus={e => (e.currentTarget.style.borderBottomColor = accentColor)}
+        onBlur={e => (e.currentTarget.style.borderBottomColor = borderColor)}
+      >
         <select
           value={country.dial}
           onChange={e => {
             const selected = COUNTRIES.find(c => `${c.code}${c.dial}` === e.target.value)
             if (selected) { setCountry(selected); setLocal(''); onChange('') }
           }}
-          className="bg-transparent outline-none text-sm py-2.5 cursor-pointer shrink-0 text-[#1A1A1A]"
+          className="bg-transparent outline-none text-sm py-2.5 cursor-pointer shrink-0"
+          style={{ color: textColor }}
           aria-label="País"
         >
           {COUNTRIES.map(c => (
@@ -74,7 +85,7 @@ export default function PhoneInput({ name, required, value, onChange, placeholde
             </option>
           ))}
         </select>
-        <span className="text-[#EDE9E3]">|</span>
+        <span style={{ color: borderColor }}>|</span>
         <input
           type="tel"
           name={name}
@@ -83,13 +94,13 @@ export default function PhoneInput({ name, required, value, onChange, placeholde
           onChange={e => handleNumberChange(e.target.value)}
           placeholder={placeholder ?? hint}
           className={inputClass}
-          style={{ color: '#1A1A1A' }}
+          style={{ color: textColor }}
           inputMode="numeric"
           pattern={`[0-9]{${country.min},${country.max}}`}
           title={`Ingresa ${hint} para ${country.flag} ${country.dial}`}
         />
         {local.length > 0 && (
-          <span className={`text-[10px] shrink-0 pr-1 ${isValid ? 'text-green-500' : 'text-[#B0A89E]'}`}>
+          <span className="text-[10px] shrink-0 pr-1" style={{ color: isValid ? '#22c55e' : mutedColor }}>
             {local.length}/{country.max}
           </span>
         )}

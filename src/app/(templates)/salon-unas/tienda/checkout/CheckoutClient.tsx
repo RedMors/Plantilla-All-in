@@ -3,10 +3,10 @@
 import { useState, useEffect, useTransition } from 'react'
 import Link from 'next/link'
 import { Minus, Plus, Trash2, Banknote, CreditCard, Zap, Copy, Check, Loader2, ShoppingBag, ArrowLeft } from 'lucide-react'
-import { useCart } from '../cart-context'
+import { useCart } from '@/components/salon/CartContext'
 import { createOrder, checkOrderPayment } from '../checkout-actions'
 import { BRAND, BRAND_LIGHT, INK, CREAM, STONE, MUTED } from '../../constants'
-import PhoneInput from '../../PhoneInput'
+import PhoneInput from '@/components/salon/PhoneInput'
 
 type PayMethod = 'cash' | 'card' | 'lightning'
 type Step = 'cart' | 'lightning' | 'success'

@@ -43,6 +43,7 @@ export const SHADOW = {
 // ─── Navegación ───────────────────────────────────────────────────────────
 export const NAV_LINKS = [
   { href: '/salon-unas-lite/servicios', label: 'Servicios' },
+  { href: '/salon-unas-lite/tienda',    label: 'Tienda' },
   { href: '/salon-unas-lite/galeria',   label: 'Galería' },
   { href: '/salon-unas-lite/contacto',  label: 'Contacto' },
 ] as const

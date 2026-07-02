@@ -4,7 +4,7 @@ import { useState, useActionState } from 'react'
 import { CheckCircle } from 'lucide-react'
 import { sendContactMessage } from './actions'
 import { BRAND, INK } from '../constants'
-import PhoneInput from '../PhoneInput'
+import PhoneInput from '@/components/salon/PhoneInput'
 
 type Props = {
   services: { slug: string; name: string; price: number }[]

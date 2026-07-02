@@ -2,7 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import MobileNav from './MobileNav'
-import { BRAND, BLUSH, PLUM, MAUVE, MAUVE_SOFT, LINE, NAV_LINKS } from './constants'
+import { BRAND, BLUSH, PLUM, MAUVE, MAUVE_SOFT, LINE, PETAL, NAV_LINKS } from './constants'
+import { CartProvider } from '@/components/salon/CartContext'
+import CartIndicator from '@/components/salon/CartIndicator'
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -17,6 +19,7 @@ export const metadata: Metadata = {
 
 export default function SalonUnasLayout({ children }: { children: React.ReactNode }) {
   return (
+    <CartProvider>
     <div
       className={`${jakarta.variable} min-h-screen flex flex-col`}
       style={{ fontFamily: 'var(--font-jakarta), sans-serif', background: BLUSH, color: PLUM }}
@@ -52,6 +55,7 @@ export default function SalonUnasLayout({ children }: { children: React.ReactNod
           </nav>
 
           <div className="flex items-center gap-2">
+            <CartIndicator basePath="/salon-unas-lite" brand={BRAND} ink={PLUM} hoverBg={PETAL} />
             <MobileNav />
             <Link
               href="/salon-unas-lite/contacto"
@@ -91,5 +95,6 @@ export default function SalonUnasLayout({ children }: { children: React.ReactNod
         </div>
       </footer>
     </div>
+    </CartProvider>
   )
 }

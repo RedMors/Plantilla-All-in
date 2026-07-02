@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { CheckCircle, ArrowRight, ArrowLeft, Banknote, CreditCard, Zap, Copy, Check, Loader2 } from 'lucide-react'
 import { bookAppointment, checkLightningPayment } from './actions'
 import { BRAND, BRAND_LIGHT, INK, CREAM, STONE } from './constants'
-import PhoneInput from './PhoneInput'
+import PhoneInput from '@/components/salon/PhoneInput'
 
 type Variant = { id: string; name: string; price: number; duration: string }
 

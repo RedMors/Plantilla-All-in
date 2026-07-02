@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { Cormorant_Garamond } from 'next/font/google'
 import MobileNav from './MobileNav'
 import { NAV_LINKS } from './constants'
-import { CartProvider } from './tienda/cart-context'
-import CartIndicator from './tienda/CartIndicator'
+import { CartProvider } from '@/components/salon/CartContext'
+import CartIndicator from '@/components/salon/CartIndicator'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],

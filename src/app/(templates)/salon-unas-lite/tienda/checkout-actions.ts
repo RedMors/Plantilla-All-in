@@ -7,7 +7,7 @@ import type { CheckoutResult } from '@/lib/salon/checkout-actions'
 export type { CheckoutResult }
 
 export async function createOrder(input: Omit<Parameters<typeof shared.createOrder>[1], 'basePath'>): Promise<CheckoutResult> {
-  return shared.createOrder(config, { ...input, basePath: '/salon-unas' })
+  return shared.createOrder(config, { ...input, basePath: '/salon-unas-lite' })
 }
 
 export async function checkOrderPayment(orderId: string) {
