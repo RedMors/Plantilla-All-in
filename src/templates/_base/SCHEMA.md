@@ -80,16 +80,52 @@ CREATE POLICY "public_insert_appointments"
   ON {prefix}_appointments FOR INSERT TO anon
   WITH CHECK (true);
 
--- Admin total (dueña autenticada)
-CREATE POLICY "admin_all_{tabla}"
-  ON {tabla} FOR ALL TO authenticated
-  USING (true) WITH CHECK (true);
-
--- Service role total (Server Actions)
+-- Service role total (Server Actions) — este es el único acceso de escritura del admin hoy.
 CREATE POLICY "service_all_{tabla}"
   ON {tabla} FOR ALL TO service_role
   USING (true) WITH CHECK (true);
 ```
+
+> ⚠️ **Superado (no usar en plantillas nuevas):** el patrón `admin_all_{tabla} ... TO authenticated
+> USING (true)` que aparecía aquí antes daba acceso total del admin a **CUALQUIER** usuario
+> autenticado del pool de Supabase Auth del proyecto — que es compartido entre plantillas/apps
+> (confirmado: el mismo pool de Auth de `salon-unas` tiene usuarios de otros proyectos). Desde
+> `salon-unas`, el gate real de acceso al admin vive en `admin/(protected)/layout.tsx`, que
+> consulta `nail_admin_users` (ver abajo) — no en una política RLS de `authenticated`. Las
+> Server Actions siguen usando `service_role` (bypassa RLS) como único camino de escritura;
+> el control de "quién puede entrar al admin" es a nivel de aplicación, no de RLS.
+
+### `{prefix}_admin_users` — acceso al panel admin
+```sql
+id             uuid PK DEFAULT gen_random_uuid()
+auth_user_id   uuid NOT NULL UNIQUE FK → auth.users.id
+email          text NOT NULL
+full_name      text
+role           text CHECK IN ('owner','staff') DEFAULT 'staff'
+sections       text[] DEFAULT '{}'   -- solo aplica a 'staff'; 'owner' tiene acceso total
+is_active      boolean DEFAULT true
+created_by     uuid FK → auth.users.id
+created_at     timestamptz DEFAULT now()
+last_login_at  timestamptz
+```
+El `layout.tsx` del admin exige una fila `is_active=true` en esta tabla, no solo sesión válida.
+
+### `{prefix}_audit_log` — trazabilidad de cambios
+```sql
+id           uuid PK DEFAULT gen_random_uuid()
+actor_id     uuid FK → auth.users.id
+actor_email  text
+action       text CHECK IN ('create','update','delete','toggle_active','login','create_admin_user','export')
+entity_type  text NOT NULL
+entity_id    uuid
+before       jsonb   -- NUNCA debe contener secretos (ej. contraseñas temporales)
+after        jsonb   -- NUNCA debe contener secretos
+metadata     jsonb
+created_at   timestamptz DEFAULT now()
+```
+Se llena con una llamada explícita a `logAudit()` al final de cada Server Action mutante — no
+con triggers de Postgres (el service role no expone el actor de sesión HTTP al trigger sin
+infraestructura adicional).
 
 ---
 
